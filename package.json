@@ -20,7 +20,6 @@
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
-    "postinstall": "pnpm lint:ws",
     "typecheck": "turbo run typecheck",
     "ui-add": "turbo run ui-add",
     "android": "expo run:android",
@@ -33,6 +32,21 @@
     "prettier": "catalog:",
     "turbo": "^2.5.8",
     "typescript": "catalog:"
+  },
+  "pnpm": {
+    "overrides": {
+      "nativewind": "5.0.0-preview.2"
+    },
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "nativewind": "5.0.0-preview.2"
+      }
+    },
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "esbuild",
+      "sharp"
+    ]
   },
   "prettier": "@acme/prettier-config"
 }
