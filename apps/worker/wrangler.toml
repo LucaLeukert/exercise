@@ -1,0 +1,11 @@
+name = "exercise-api"
+main = "src/index.ts"
+compatibility_date = "2025-05-05"
+
+[observability]
+enabled = true
+
+[[kv_namespaces]]
+binding = "KV"
+id = "7633b7ed94d24c3fa21d475e92957eae"
+preview_id = "7633b7ed94d24c3fa21d475e92957eae"

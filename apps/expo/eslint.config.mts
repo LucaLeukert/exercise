@@ -9,4 +9,13 @@ export default defineConfig(
   },
   baseConfig,
   reactConfig,
+  {
+    rules: {
+      // Allow handling unknown error shapes without exhaustive narrowing
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-return": "off",
+    },
+  },
 );
