@@ -35,7 +35,9 @@
   },
   "pnpm": {
     "overrides": {
-      "nativewind": "5.0.0-preview.2"
+      "nativewind": "5.0.0-preview.2",
+      "react": "19.1.0",
+      "react-dom": "19.1.0"
     },
     "peerDependencyRules": {
       "allowedVersions": {

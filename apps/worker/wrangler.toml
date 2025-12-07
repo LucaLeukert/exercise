@@ -9,3 +9,4 @@ enabled = true
 binding = "KV"
 id = "7633b7ed94d24c3fa21d475e92957eae"
 preview_id = "7633b7ed94d24c3fa21d475e92957eae"
+remote = true

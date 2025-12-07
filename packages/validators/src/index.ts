@@ -58,8 +58,18 @@ export const Exercise = z.object({
     "strongman",
     "plyometrics",
   ]),
-  images: z.array(z.url()),
+  images: z.array(z.string()),
 });
+
+export const ExerciseInRoutine = z.object({
+  exerciseId: z.string().uuid(),
+  sets: z.number().int().positive(),
+  reps: z.number().int().positive(),
+  notes: z.string().optional(),
+});
+
+export type ExerciseInRoutine = z.infer<typeof ExerciseInRoutine>;
+
 
 export const ExerciseArray = z.array(Exercise);
 
@@ -79,8 +89,10 @@ export const parseJsonPreprocessor = (value: unknown, ctx: z.RefinementCtx) => {
   return value;
 };
 
-export const ExerciseWithJson = z.preprocess(parseJsonPreprocessor, Exercise);
-export const ExerciseArrayWithJson = z.preprocess(
+export const ExerciseJSONPreprocessor = z.preprocess(parseJsonPreprocessor, Exercise);
+export const ExerciseArrayJSONPreprocessor = z.preprocess(
   parseJsonPreprocessor,
   ExerciseArray,
 );
+
+export type ExerciseType = z.infer<typeof Exercise>;
