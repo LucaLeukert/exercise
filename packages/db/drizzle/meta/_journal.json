@@ -15,6 +15,20 @@
       "when": 1765143006745,
       "tag": "0001_oval_nicolaos",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765143543738,
+      "tag": "0002_cultured_kate_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1765145495267,
+      "tag": "0003_chilly_steve_rogers",
+      "breakpoints": true
     }
   ]
 }

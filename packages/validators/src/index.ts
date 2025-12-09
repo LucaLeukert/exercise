@@ -62,7 +62,7 @@ export const Exercise = z.object({
 });
 
 export const ExerciseInRoutine = z.object({
-  exerciseId: z.string().uuid(),
+  exerciseId: z.string(),
   sets: z.number().int().positive(),
   reps: z.number().int().positive(),
   notes: z.string().optional(),
@@ -70,6 +70,46 @@ export const ExerciseInRoutine = z.object({
 
 export type ExerciseInRoutine = z.infer<typeof ExerciseInRoutine>;
 
+export const levelEnum = z.enum(["beginner", "intermediate", "expert"]);
+
+export const categoryEnum = z.enum([
+  "powerlifting",
+  "strength",
+  "stretching",
+  "cardio",
+  "olympic weightlifting",
+  "strongman",
+  "plyometrics",
+]);
+
+export const equipmentEnum = z.enum([
+  "medicine ball",
+  "dumbbell",
+  "body only",
+  "bands",
+  "kettlebells",
+  "foam roll",
+  "cable",
+  "machine",
+  "barbell",
+  "exercise ball",
+  "e-z curl bar",
+  "other",
+]);
+
+export const mechanicEnum = z.enum(["isolation", "compound"]);
+
+export const ExerciseFilters = z.object({
+  primaryMuscles: z.array(muscleEnum).optional(),
+  secondaryMuscles: z.array(muscleEnum).optional(),
+  level: levelEnum.optional(),
+  category: categoryEnum.optional(),
+  equipment: equipmentEnum.optional(),
+  mechanic: mechanicEnum.optional(),
+  searchQuery: z.string().optional(),
+});
+
+export type ExerciseFiltersType = z.infer<typeof ExerciseFilters>;
 
 export const ExerciseArray = z.array(Exercise);
 

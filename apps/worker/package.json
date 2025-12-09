@@ -13,7 +13,6 @@
     }
   },
   "dependencies": {
-    "@acme/auth": "workspace:*",
     "@acme/db": "workspace:*",
     "@acme/validators": "workspace:*",
     "@clerk/backend": "^2.25.1",

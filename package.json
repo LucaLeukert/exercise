@@ -45,9 +45,19 @@
       }
     },
     "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "@prisma/client",
+      "@prisma/engines",
       "@tailwindcss/oxide",
+      "better-sqlite3",
+      "browser-tabs-lock",
+      "bufferutil",
+      "core-js",
+      "core-js-pure",
       "esbuild",
-      "sharp"
+      "prisma",
+      "unrs-resolver",
+      "workerd"
     ]
   },
   "prettier": "@acme/prettier-config"

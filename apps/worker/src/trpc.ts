@@ -1,6 +1,6 @@
-import { db } from '@acme/db/client'
+import { createDbClient } from '@acme/db/client'
 import { createClerkClient } from '@clerk/backend'
-import { TokenType } from '@clerk/backend/internal'
+import { SignedInAuthObject, TokenType } from '@clerk/backend/internal'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { env } from 'cloudflare:workers'
 import superjson from 'superjson'
@@ -22,8 +22,6 @@ import { z, ZodError } from 'zod/v4'
 const createClerkClientInternal = async () => {
 	const publishableKey = env.CLERK_PUBLISHABLE_KEY
 	const secretKey = env.CLERK_SECRET_KEY
-
-	console.log(publishableKey)
 
 	if (!secretKey || !publishableKey) {
 		throw new Error('Clerk keys are not set in environment variables')
@@ -47,6 +45,9 @@ export const createTRPCContext = async (opts: { request: Request }) => {
 		secretKey,
 		acceptsToken: TokenType.SessionToken,
 	})
+
+	// Create DB client with Cloudflare Workers env
+	const db = createDbClient(env.POSTGRES_URL)
 
 	return {
 		clerkClient,
@@ -112,7 +113,7 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
 	return next({
 		ctx: {
 			// infers the `session` as non-nullable
-			session: { ...ctx.session, user: ctx.session.user },
+			session: { ...ctx.session, user: ctx.session.user as SignedInAuthObject },
 		},
 	})
 })

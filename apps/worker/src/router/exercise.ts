@@ -1,30 +1,42 @@
 import type { TRPCRouterRecord } from '@trpc/server'
 import { TRPCError } from '@trpc/server'
-import z from 'zod'
+import { z } from 'zod/v4'
 
-import { ExerciseJSONPreprocessor, type ExerciseType } from '@acme/validators'
+import type { ExerciseType } from '@acme/validators'
+import { ExerciseFilters, ExerciseJSONPreprocessor } from '@acme/validators'
 
-import { protectedProcedure, publicProcedure } from '../trpc.js'
+import { protectedProcedure } from '../trpc.js'
+
+async function fetchExercisesInBatches(kv: KVNamespace, keys: string[]): Promise<ExerciseType[]> {
+    const exercises: ExerciseType[] = []
+
+    for (let i = 0; i < keys.length; i += 100) {
+        const batch = keys.slice(i, i + 100)
+
+        // Fetch up to 100 keys at once using bulk get
+        const batchResults = await kv.get(batch, { type: 'json' })
+
+        // Parse each result from the Map
+        for (const [key, item] of batchResults) {
+            if (item) {
+                const parsed = ExerciseJSONPreprocessor.safeParse(item)
+                if (parsed.success) {
+                    exercises.push(parsed.data)
+                }
+            }
+        }
+    }
+
+    return exercises
+}
 
 export const exerciseRouter = {
-    cursor: protectedProcedure
-        .input(
-            z.object({
-                cursor: z.string().nullish(),
-                take: z.number().min(1).max(100).nullish()
-            })
-        )
-        .query(async ({ ctx, input }): Promise<{ exercises: ExerciseType[]; nextCursor: string | null }> => {
-            const limit = input.take ?? 20
-
-            const result = await ctx.env.KV.list({
-                limit,
-                cursor: input.cursor ?? undefined
-            })
-
+    getByIds: protectedProcedure
+        .input(z.object({ ids: z.array(z.string()) }))
+        .query(async ({ ctx, input }): Promise<{ exercises: ExerciseType[] }> => {
             const exercisesData = await Promise.all(
-                result.keys.map(async (item) => {
-                    const exerciseData = await ctx.env.KV.get(item.name)
+                input.ids.map(async (id) => {
+                    const exerciseData = await ctx.env.KV.get(id)
                     if (!exerciseData) return null
 
                     const parseResult = ExerciseJSONPreprocessor.parse(exerciseData)
@@ -32,21 +44,13 @@ export const exerciseRouter = {
                     return parseResult
                 })
             )
-            
+
             const exercises = exercisesData.filter((ex): ex is ExerciseType => ex !== null)
-            const nextCursor = result.list_complete ? null : result.cursor
 
             return {
-                exercises,
-                nextCursor
+                exercises
             }
         }),
-    amount: protectedProcedure.query(async ({ ctx }) => {
-        const result = await ctx.env.KV.list()
-        return {
-            amount: result.keys.length
-        }
-    }),
     fetchExercise: protectedProcedure
         .input(
             z.object({
@@ -73,5 +77,43 @@ export const exerciseRouter = {
             return {
                 exercise: result.data
             }
-        })
+        }),
+
+    version: protectedProcedure.query(async ({ ctx }) => {
+        const result = await ctx.env.KV.list()
+        const totalKeys = result.keys.length
+
+        // Create a simple version string based on count and a timestamp
+        // In production, you might want to store this in KV or use a more sophisticated versioning
+        const version = `v1.0.${totalKeys}`
+
+        return {
+            version,
+            totalExercises: totalKeys,
+            timestamp: Date.now()
+        }
+    }),
+
+    // Fetch all exercises for initial sync
+    sync: protectedProcedure.query(
+        async ({
+            ctx
+        }): Promise<{
+            version: string
+            exercises: ExerciseType[]
+            timestamp: number
+        }> => {
+            const allKeys = (await ctx.env.KV.list()).keys.map((k) => k.name)
+            const exercises = await fetchExercisesInBatches(ctx.env.KV, allKeys)
+
+            // Create version
+            const version = `v1.0.${exercises.length}`
+
+            return {
+                version,
+                exercises,
+                timestamp: Date.now()
+            }
+        }
+    )
 } satisfies TRPCRouterRecord

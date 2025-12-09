@@ -1,5 +1,0 @@
-{
-  "extends": "@acme/tsconfig/compiled-package.json",
-  "include": ["src", "../../apps/worker/src/router/routine.ts"],
-  "exclude": ["node_modules"]
-}
