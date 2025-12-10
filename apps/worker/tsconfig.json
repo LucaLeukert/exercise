@@ -1,8 +1,12 @@
 {
-  "extends": "@acme/tsconfig/compiled-package.json",
-  "include": ["**/*.ts", "worker-configuration.d.ts", "../../packages/validators/src/validators.ts"],
-  "exclude": ["node_modules"],
-  "compilerOptions": {
-    "strict": true
-  }
+    "extends": "@acme/tsconfig/compiled-package.json",
+    "include": [
+        "**/*.ts",
+        "worker-configuration.d.ts",
+        "../../packages/validators/src/validators.ts"
+    ],
+    "exclude": ["node_modules"],
+    "compilerOptions": {
+        "strict": true
+    }
 }

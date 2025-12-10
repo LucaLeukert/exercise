@@ -3,7 +3,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod/v4'
 
 import type { ExerciseType } from '@acme/validators'
-import { ExerciseFilters, ExerciseJSONPreprocessor } from '@acme/validators'
+import { ExerciseJSONPreprocessor } from '@acme/validators'
 
 import { protectedProcedure } from '../trpc.js'
 
@@ -17,7 +17,7 @@ async function fetchExercisesInBatches(kv: KVNamespace, keys: string[]): Promise
         const batchResults = await kv.get(batch, { type: 'json' })
 
         // Parse each result from the Map
-        for (const [key, item] of batchResults) {
+        for (const [_, item] of batchResults) {
             if (item) {
                 const parsed = ExerciseJSONPreprocessor.safeParse(item)
                 if (parsed.success) {

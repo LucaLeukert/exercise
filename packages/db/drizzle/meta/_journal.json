@@ -1,34 +1,34 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1765142826609,
-      "tag": "0000_third_eddie_brock",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1765143006745,
-      "tag": "0001_oval_nicolaos",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1765143543738,
-      "tag": "0002_cultured_kate_bishop",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1765145495267,
-      "tag": "0003_chilly_steve_rogers",
-      "breakpoints": true
-    }
-  ]
+    "version": "7",
+    "dialect": "postgresql",
+    "entries": [
+        {
+            "idx": 0,
+            "version": "7",
+            "when": 1765142826609,
+            "tag": "0000_third_eddie_brock",
+            "breakpoints": true
+        },
+        {
+            "idx": 1,
+            "version": "7",
+            "when": 1765143006745,
+            "tag": "0001_oval_nicolaos",
+            "breakpoints": true
+        },
+        {
+            "idx": 2,
+            "version": "7",
+            "when": 1765143543738,
+            "tag": "0002_cultured_kate_bishop",
+            "breakpoints": true
+        },
+        {
+            "idx": 3,
+            "version": "7",
+            "when": 1765145495267,
+            "tag": "0003_chilly_steve_rogers",
+            "breakpoints": true
+        }
+    ]
 }

@@ -1,45 +1,36 @@
-import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { WorkerEntrypoint } from "cloudflare:workers";
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
+import { WorkerEntrypoint } from 'cloudflare:workers'
 
-import { AppRouter, appRouter } from "./router";
-import { createTRPCContext } from "./trpc";
+import type { AppRouter } from './router'
+import { appRouter } from './router'
+import { createTRPCContext } from './trpc'
 
 export default class TRPCCloudflareWorkerExample extends WorkerEntrypoint {
-  async fetch(request: Request): Promise<Response> {
-    if (request.method === "OPTIONS") {
-      return handleCORSPreflight();
-    }
+    async fetch(request: Request): Promise<Response> {
+        if (request.method === 'OPTIONS') {
+            return handleCORSPreflight()
+        }
 
-    return fetchRequestHandler({
-      endpoint: "/trpc",
-      req: request,
-      router: appRouter,
-      createContext: () => createTRPCContext({ request }),
-    });
-  }
+        return fetchRequestHandler({
+            endpoint: '/trpc',
+            req: request,
+            router: appRouter,
+            createContext: () => createTRPCContext({ request })
+        })
+    }
 }
 
-const addCORSHeaders = (res: Response) => {
-  const response = new Response(res.body, res);
-  response.headers.set("Access-Control-Allow-Origin", "*");
-  response.headers.set("Access-Control-Allow-Headers", "*");
-  response.headers.set("Access-Control-Allow-Credentials", "true");
-  response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-
-  return response;
-};
-
 const handleCORSPreflight = () => {
-  return new Response(null, {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "*",
-      "Access-Control-Allow-Credentials": "true",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    },
-  });
-};
+    return new Response(null, {
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+        }
+    })
+}
 
 /**
  * Inference helpers for input types
@@ -47,7 +38,7 @@ const handleCORSPreflight = () => {
  * type PostByIdInput = RouterInputs['post']['byId']
  *      ^? { id: number }
  */
-type RouterInputs = inferRouterInputs<AppRouter>;
+type RouterInputs = inferRouterInputs<AppRouter>
 
 /**
  * Inference helpers for output types
@@ -55,8 +46,8 @@ type RouterInputs = inferRouterInputs<AppRouter>;
  * type AllPostsOutput = RouterOutputs['post']['all']
  *      ^? Post[]
  */
-type RouterOutputs = inferRouterOutputs<AppRouter>;
+type RouterOutputs = inferRouterOutputs<AppRouter>
 
-export { type AppRouter, appRouter } from "./router";
-export { createTRPCContext } from "./trpc";
-export type { RouterInputs, RouterOutputs };
+export { type AppRouter, appRouter } from './router'
+export { createTRPCContext } from './trpc'
+export type { RouterInputs, RouterOutputs }

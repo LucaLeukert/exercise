@@ -10,9 +10,15 @@ export const Routine = pgTable('routine', (t) => ({
     userId: t.varchar('user_id', { length: 256 }).notNull(),
     name: t.varchar('name', { length: 256 }).notNull(),
     description: t.text('description'),
-    exercises: t.jsonb('exercises').notNull().$type<ExerciseInRoutine[]>().default(sql`'[]'::jsonb`),
+    exercises: t
+        .jsonb('exercises')
+        .notNull()
+        .$type<ExerciseInRoutine[]>()
+        .default(sql`'[]'::jsonb`),
     createdAt: t.timestamp('created_at').defaultNow().notNull(),
-    updatedAt: t.timestamp('updated_at', { mode: 'date', withTimezone: true }).$onUpdateFn(() => sql`now()`)
+    updatedAt: t
+        .timestamp('updated_at', { mode: 'date', withTimezone: true })
+        .$onUpdateFn(() => sql`now()`)
 }))
 
 export const CreateRoutineSchema = createInsertSchema(Routine, {

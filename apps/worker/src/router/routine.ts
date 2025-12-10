@@ -1,10 +1,10 @@
 import type { TRPCRouterRecord } from '@trpc/server'
 import { z } from 'zod/v4'
 
-import { and, desc, eq, sql } from '@acme/db'
+import { and, desc, eq } from '@acme/db'
 import { CreateRoutineSchema, Routine, UpdateRoutineSchema } from '@acme/db/schema'
 
-import { protectedProcedure, publicProcedure } from '../trpc'
+import { protectedProcedure } from '../trpc'
 
 export const routineRouter = {
     all: protectedProcedure.query(({ ctx }) => {
