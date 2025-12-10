@@ -15,8 +15,8 @@
     },
     "dependencies": {
         "@acme/db": "workspace:*",
-        "@acme/validators": "workspace:*",
         "@acme/eslint-config": "workspace:*",
+        "@acme/validators": "workspace:*",
         "@clerk/backend": "^2.25.1",
         "@trpc/client": "npm:@trpc/client",
         "@trpc/server": "npm:@trpc/server",
