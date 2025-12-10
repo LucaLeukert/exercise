@@ -11,7 +11,9 @@ module.exports = defineConfig([
     },
     {
         rules: {
-            'react/display-name': 'off'
+            'react/display-name': 'off',
+            // Workspace aliases (e.g. @acme/validators) resolve via pnpm links/TS, so disable import/no-unresolved here.
+            'import/no-unresolved': 'off'
         }
     }
 ])
