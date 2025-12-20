@@ -18,7 +18,12 @@ export function fromThrowable<T, E = Error>(
             if (errorMapper) {
                 return err(errorMapper(error))
             }
-            return err(error as E)
+            // Normalize unknown error into Error instance when no mapper provided
+            const normalizedError =
+                error instanceof Error
+                    ? (error as E)
+                    : (new Error(String(error)) as unknown as E)
+            return err(normalizedError)
         })
 }
 

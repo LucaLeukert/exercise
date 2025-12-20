@@ -18,6 +18,65 @@ import * as TogglePrimitive from '@rn-primitives/toggle'
 import { FlashList } from '@shopify/flash-list'
 import { useQuery } from 'convex/react'
 
+interface SetInputProps {
+    set: WorkoutSet
+    index: number
+    onUpdate: (index: number, field: keyof WorkoutSet, value: number | boolean) => Promise<void>
+}
+
+function SetInputRow({ set, index, onUpdate }: SetInputProps) {
+    const [localWeight, setLocalWeight] = useState(String(set.weight))
+    const [localReps, setLocalReps] = useState(String(set.completedReps))
+
+    // Update local state when set changes from outside
+    useEffect(() => {
+        setLocalWeight(String(set.weight))
+        setLocalReps(String(set.completedReps))
+    }, [set.weight, set.completedReps])
+
+    const handleWeightBlur = () => {
+        const parsed = parseInt(localWeight, 10)
+        const value = isNaN(parsed) ? 0 : parsed
+        void onUpdate(index, 'weight', value)
+    }
+
+    const handleRepsBlur = () => {
+        const parsed = parseInt(localReps, 10)
+        const value = isNaN(parsed) ? set.targetReps : parsed
+        void onUpdate(index, 'completedReps', value)
+    }
+
+    return (
+        <View style={styles.setInputs}>
+            <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Weight</Text>
+                <TextInput
+                    style={styles.input}
+                    value={localWeight}
+                    onChangeText={setLocalWeight}
+                    onBlur={handleWeightBlur}
+                    onEndEditing={handleWeightBlur}
+                    keyboardType="numeric"
+                    placeholder="0"
+                />
+            </View>
+
+            <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Reps</Text>
+                <TextInput
+                    style={styles.input}
+                    value={localReps}
+                    onChangeText={setLocalReps}
+                    onBlur={handleRepsBlur}
+                    onEndEditing={handleRepsBlur}
+                    keyboardType="numeric"
+                    placeholder={String(set.targetReps)}
+                />
+            </View>
+        </View>
+    )
+}
+
 export default function ActiveWorkoutPage() {
     const {
         activeSession,
@@ -225,37 +284,7 @@ export default function ActiveWorkoutPage() {
                                     <Text style={styles.setNumberText}>{item.setNumber}</Text>
                                 </View>
 
-                                <View style={styles.setInputs}>
-                                    <View style={styles.inputGroup}>
-                                        <Text style={styles.inputLabel}>Weight</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={String(item.weight)}
-                                            onChangeText={(val) =>
-                                                handleUpdateSet(index, 'weight', parseInt(val) || 0)
-                                            }
-                                            keyboardType="numeric"
-                                            placeholder="0"
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputGroup}>
-                                        <Text style={styles.inputLabel}>Reps</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            value={String(item.completedReps)}
-                                            onChangeText={(val) =>
-                                                handleUpdateSet(
-                                                    index,
-                                                    'completedReps',
-                                                    parseInt(val) || 0
-                                                )
-                                            }
-                                            keyboardType="numeric"
-                                            placeholder={String(item.targetReps)}
-                                        />
-                                    </View>
-                                </View>
+                                <SetInputRow set={item} index={index} onUpdate={handleUpdateSet} />
 
                                 <TogglePrimitive.Root
                                     style={({ pressed }) => [

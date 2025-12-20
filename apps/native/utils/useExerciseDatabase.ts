@@ -39,24 +39,30 @@ export function useExerciseDatabase() {
     const performSync = useCallback(async () => {
         setSyncing(true)
 
-        if (!syncData || !convertedExercises) {
-            setError('No data received from sync')
-            return
-        }
-
-        const saveResult = await saveExercisesToLocal(convertedExercises, syncData.version)
-
-        saveResult.match(
-            () => {
-                // Update store
-                setExercises(convertedExercises, syncData.version, syncData.timestamp)
-                console.log(`Synced ${convertedExercises.length} exercises (${syncData.version})`)
-            },
-            (error) => {
-                console.error('Error syncing exercises:', error)
-                setError('Failed to sync exercises from server')
+        try {
+            if (!syncData || !convertedExercises) {
+                setError('No data received from sync')
+                return
             }
-        )
+
+            const saveResult = await saveExercisesToLocal(convertedExercises, syncData.version)
+
+            saveResult.match(
+                () => {
+                    // Update store
+                    setExercises(convertedExercises, syncData.version, syncData.timestamp)
+                    console.log(
+                        `Synced ${convertedExercises.length} exercises (${syncData.version})`
+                    )
+                },
+                (error) => {
+                    console.error('Error syncing exercises:', error)
+                    setError('Failed to sync exercises from server')
+                }
+            )
+        } finally {
+            setSyncing(false)
+        }
     }, [syncData, convertedExercises, setSyncing, setExercises, setError])
 
     /**
