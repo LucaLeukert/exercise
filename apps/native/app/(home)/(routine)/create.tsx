@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
     ActivityIndicator,
     ScrollView,
@@ -10,8 +11,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useRoutineStore } from '@/store/store'
-import { useCreateRoutine } from '@/utils/convex'
+import { api } from '@/utils/convex'
+import { wrapConvexMutation } from '@/utils/result'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
+import { useMutation } from 'convex/react'
 
 export default function CreateRoutinePage() {
     const {
@@ -25,7 +28,8 @@ export default function CreateRoutinePage() {
         reset
     } = useRoutineStore()
 
-    const createRoutineMutation = useCreateRoutine()
+    const createRoutineMutation = useMutation(api.routines.create)
+    const [isCreating, setIsCreating] = useState(false)
 
     // Use local exercise database
     const { exercises: allExercises, isInitialized, isSyncing, error } = useExerciseDatabase()
@@ -36,19 +40,38 @@ export default function CreateRoutinePage() {
             return
         }
 
-        try {
-            await createRoutineMutation({
+        if (isCreating) {
+            return
+        }
+
+        setIsCreating(true)
+
+        const result = await wrapConvexMutation(
+            createRoutineMutation,
+            {
                 name,
                 description: description || undefined,
                 exercises
+            },
+            (error) => ({
+                type: 'mutation_error' as const,
+                message: 'Failed to create routine',
+                originalError: error
             })
-            alert('Routine created successfully!')
-            reset()
-            router.back()
-        } catch (error) {
-            alert('Failed to create routine')
-            console.error(error)
-        }
+        )
+
+        result.match(
+            () => {
+                alert('Routine created successfully!')
+                reset()
+                router.back()
+            },
+            (error) => {
+                alert('Failed to create routine')
+                console.error(error)
+                setIsCreating(false)
+            }
+        )
     }
 
     const handleUpdateExercise = (exerciseId: string, field: 'sets' | 'reps', value: string) => {
@@ -71,7 +94,7 @@ export default function CreateRoutinePage() {
 
     if (error) {
         console.error('Exercise Database Error:', error)
-        
+
         return (
             <SafeAreaView style={styles.container} edges={['bottom']}>
                 <View style={styles.loadingContainer}>
@@ -206,17 +229,29 @@ export default function CreateRoutinePage() {
                 <TouchableOpacity
                     style={[
                         styles.createButton,
-                        (exercises.length === 0 || !name.trim()) &&
+                        (exercises.length === 0 || !name.trim() || isCreating) &&
                             styles.createButtonDisabled
                     ]}
                     onPress={handleCreateRoutine}
-                    disabled={exercises.length === 0 || !name.trim()}
+                    disabled={exercises.length === 0 || !name.trim() || isCreating}
                 >
-                    <Text style={styles.createButtonText}>Create Routine</Text>
+                    {isCreating ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                        <Text style={styles.createButtonText}>Create Routine</Text>
+                    )}
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => router.back()}
+                    disabled={isCreating}
+                >
+                    <Text
+                        style={[styles.cancelButtonText, isCreating && styles.cancelButtonDisabled]}
+                    >
+                        Cancel
+                    </Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -404,6 +439,9 @@ const styles = StyleSheet.create({
         color: '#666',
         fontSize: 16,
         fontWeight: '600'
+    },
+    cancelButtonDisabled: {
+        opacity: 0.5
     },
     loadingContainer: {
         flex: 1,

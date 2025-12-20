@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
+import { fromThrowable } from '@/utils/result'
 import { useSSO } from '@clerk/clerk-expo'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
@@ -43,20 +44,59 @@ export default function AppleSignIn() {
     const onPress = async () => {
         setIsLoading(true)
         try {
-            const { createdSessionId, signIn, signUp, setActive } = await startSSOFlow({
-                strategy: 'oauth_apple'
-            })
+            const result = await fromThrowable(
+                () => startSSOFlow({ strategy: 'oauth_apple' }),
+                (error) => ({
+                    type: 'oauth_error' as const,
+                    message: 'Failed to start OAuth flow',
+                    originalError: error
+                })
+            )
+
+            if (result.isErr()) {
+                console.error('OAuth error:', JSON.stringify(result.error, null, 2))
+                return
+            }
+
+            const { createdSessionId, signIn, signUp, setActive } = result.value
 
             if (createdSessionId) {
                 // Session was created successfully
-                await setActive!({ session: createdSessionId })
-                router.replace('/(home)')
+                if (!setActive) {
+                    console.error('setActive is not available')
+                    return
+                }
+
+                try {
+                    const setActiveResult = await fromThrowable(
+                        () => setActive({ session: createdSessionId }),
+                        (error) => ({
+                            type: 'session_error' as const,
+                            message: 'Failed to set active session',
+                            originalError: error
+                        })
+                    )
+
+                    setActiveResult.match(
+                        () => {
+                            router.replace('/(home)')
+                        },
+                        (err) => {
+                            console.error(
+                                'Set active session error:',
+                                JSON.stringify(err, null, 2)
+                            )
+                        }
+                    )
+                } catch (error) {
+                    console.error('Unexpected error setting active session:', error)
+                }
             } else {
                 // Use signIn or signUp for next steps such as MFA
                 console.log('Additional steps required:', { signIn, signUp })
             }
-        } catch (err) {
-            console.error('OAuth error:', JSON.stringify(err, null, 2))
+        } catch (error) {
+            console.error('Unexpected error in OAuth flow:', error)
         } finally {
             setIsLoading(false)
         }
