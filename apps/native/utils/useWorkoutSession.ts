@@ -1,10 +1,9 @@
 import { useCallback, useMemo, useState } from 'react'
+import { RoutineId } from '@/utils/convex'
+import { api } from '@packages/backend'
 import { useMutation, useQuery } from 'convex/react'
 
-import type { WorkoutProgress } from '@packages/backend/convex/schema'
-
-import type { Id } from '@packages/backend/convex/_generated/dataModel'
-import { api } from '@packages/backend/convex/_generated/api'
+import type { WorkoutProgress } from '@packages/backend'
 
 export interface WorkoutSet {
     exerciseId: string
@@ -15,24 +14,17 @@ export interface WorkoutSet {
     completed: boolean
 }
 
-/**
- * Hook to manage workout sessions with Convex as the single source of truth
- * No local state persistence - everything lives in Convex database
- */
 export function useWorkoutSession() {
     const [isStarting, setIsStarting] = useState(false)
     const [isCompleting, setIsCompleting] = useState(false)
 
-    // Convex mutations
     const startMutation = useMutation(api.workouts.start)
     const saveMutation = useMutation(api.workouts.saveProgress)
     const completeMutation = useMutation(api.workouts.complete)
     const cancelMutation = useMutation(api.workouts.cancel)
 
-    // Real-time subscription to active workout - this is the single source of truth
     const activeWorkout = useQuery(api.workouts.getActive)
 
-    // Derive all state from Convex data
     const activeSession = useMemo(() => {
         if (!activeWorkout) return null
         return {
@@ -53,7 +45,6 @@ export function useWorkoutSession() {
 
     const hasActiveWorkout = activeWorkout?.status === 'active'
 
-    // Start a new workout session
     const startWorkout = useCallback(
         async (routineId?: string, initialSets: WorkoutSet[] = []) => {
             setIsStarting(true)
@@ -67,7 +58,7 @@ export function useWorkoutSession() {
 
             try {
                 const result = await startMutation({
-                    routineId: routineId as Id<'routines'> | undefined,
+                    routineId: routineId as RoutineId | undefined,
                     visibility: 'private',
                     initialProgress
                 })
@@ -80,7 +71,6 @@ export function useWorkoutSession() {
         [startMutation]
     )
 
-    // Update a set - directly saves to Convex
     const updateSet = useCallback(
         async (index: number, updates: Partial<WorkoutSet>) => {
             if (!activeWorkout || activeWorkout.status !== 'active') return
@@ -102,7 +92,6 @@ export function useWorkoutSession() {
         [activeWorkout, sets, notes, saveMutation]
     )
 
-    // Update notes - directly saves to Convex
     const setNotes = useCallback(
         async (newNotes: string) => {
             if (!activeWorkout || activeWorkout.status !== 'active') return
@@ -122,7 +111,6 @@ export function useWorkoutSession() {
         [activeWorkout, sets, saveMutation]
     )
 
-    // Complete the workout
     const completeWorkout = useCallback(async () => {
         if (!activeWorkout) return
 
@@ -137,7 +125,6 @@ export function useWorkoutSession() {
         }
     }, [activeWorkout, completeMutation])
 
-    // Cancel the workout
     const cancelWorkout = useCallback(async () => {
         if (!activeWorkout) return
 
@@ -147,24 +134,20 @@ export function useWorkoutSession() {
     }, [activeWorkout, cancelMutation])
 
     return {
-        // Session state (from Convex)
         activeSession,
         sets,
         notes,
         hasActiveWorkout,
 
-        // Actions
         startWorkout,
         updateSet,
         setNotes,
         completeWorkout,
         cancelWorkout,
 
-        // Loading states
         isStarting,
         isCompleting,
 
-        // No sync errors needed - Convex handles this automatically
         isSyncing: false,
         syncError: null
     }

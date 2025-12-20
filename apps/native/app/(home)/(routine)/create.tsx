@@ -10,8 +10,9 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useRoutineStore } from '@/store/store'
-import { useCreateRoutine } from '@/utils/convex'
+import { api } from '@/utils/convex'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
+import { useMutation } from 'convex/react'
 
 export default function CreateRoutinePage() {
     const {
@@ -25,7 +26,7 @@ export default function CreateRoutinePage() {
         reset
     } = useRoutineStore()
 
-    const createRoutineMutation = useCreateRoutine()
+    const createRoutineMutation = useMutation(api.routines.create)
 
     // Use local exercise database
     const { exercises: allExercises, isInitialized, isSyncing, error } = useExerciseDatabase()
@@ -71,7 +72,7 @@ export default function CreateRoutinePage() {
 
     if (error) {
         console.error('Exercise Database Error:', error)
-        
+
         return (
             <SafeAreaView style={styles.container} edges={['bottom']}>
                 <View style={styles.loadingContainer}>
@@ -206,8 +207,7 @@ export default function CreateRoutinePage() {
                 <TouchableOpacity
                     style={[
                         styles.createButton,
-                        (exercises.length === 0 || !name.trim()) &&
-                            styles.createButtonDisabled
+                        (exercises.length === 0 || !name.trim()) && styles.createButtonDisabled
                     ]}
                     onPress={handleCreateRoutine}
                     disabled={exercises.length === 0 || !name.trim()}

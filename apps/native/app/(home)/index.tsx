@@ -10,7 +10,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
 import { SignOutButton } from '@/components/auth/SignOut'
 import { Button } from '@/components/Button'
-import { useDeleteRoutine, useRoutines } from '@/utils/convex'
+import { useMutation, useQuery } from 'convex/react'
+import { api } from '@/utils/convex'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import { useWorkoutSession } from '@/utils/useWorkoutSession'
 import { useUser } from '@clerk/clerk-expo'
@@ -20,11 +21,11 @@ import { FlashList } from '@shopify/flash-list'
 export default function HomePage() {
     const { user } = useUser()
 
-    const routines = useRoutines()
+    const routines = useQuery(api.routines.list, {})
     const isLoading = routines === undefined
     // TODO: Use recentWorkouts for workout history section
-    // const recentWorkouts = useRecentWorkouts()
-    const deleteRoutineMutation = useDeleteRoutine()
+    // const recentWorkouts = useQuery(api.workouts.recent, {})
+    const deleteRoutineMutation = useMutation(api.routines.remove)
 
     const { forceSync, clearDatabase } = useExerciseDatabase()
     const { activeSession } = useWorkoutSession()

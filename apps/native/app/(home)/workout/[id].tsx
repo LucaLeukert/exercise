@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
     ActivityIndicator,
     Alert,
-    Pressable,
     StyleSheet,
     Text,
     TextInput,
@@ -11,16 +10,14 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
-import { useExercisesByIds, useRoutine } from '@/utils/convex'
+import { RoutineId } from '@/utils/convex'
 import { useWorkoutSession, WorkoutSet } from '@/utils/useWorkoutSession'
 import { Ionicons } from '@expo/vector-icons'
+import { api } from '@packages/backend'
 import * as TogglePrimitive from '@rn-primitives/toggle'
 import { FlashList } from '@shopify/flash-list'
+import { useQuery } from 'convex/react'
 
-import type { Id } from '@packages/backend/convex/_generated/dataModel'
-
-// Check if ID is a valid Convex ID (not a UUID)
-// Convex IDs are base64-like strings, UUIDs have dashes
 const isValidConvexId = (id: string): boolean => {
     if (!id) return false
     // UUIDs have the format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -32,8 +29,10 @@ export default function WorkoutPage() {
     const { id } = useLocalSearchParams<{ id: string }>()
     const isQuickWorkout = !isValidConvexId(id)
 
-    // Only query routine if it's a valid ID
-    const routine = useRoutine(isQuickWorkout ? undefined : (id as Id<'routines'>))
+    const routine = useQuery(
+        api.routines.getById,
+        isQuickWorkout ? 'skip' : { id: id as RoutineId }
+    )
     const isLoading = routine === undefined && !isQuickWorkout
 
     const {
@@ -64,7 +63,7 @@ export default function WorkoutPage() {
         return []
     }, [routine, sets])
 
-    const exercisesData = useExercisesByIds(exerciseIds)
+    const exercisesData = useQuery(api.exercises.getByIds, { ids: exerciseIds })
 
     const allExercises = exercisesData?.exercises ?? []
 
