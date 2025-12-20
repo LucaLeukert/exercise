@@ -11,6 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useRoutineStore } from '@/store/store'
 import { api } from '@/utils/convex'
+import { wrapConvexMutation } from '@/utils/result'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import { useMutation } from 'convex/react'
 
@@ -37,19 +38,31 @@ export default function CreateRoutinePage() {
             return
         }
 
-        try {
-            await createRoutineMutation({
+        const result = await wrapConvexMutation(
+            createRoutineMutation,
+            {
                 name,
                 description: description || undefined,
                 exercises
+            },
+            (error) => ({
+                type: 'mutation_error' as const,
+                message: 'Failed to create routine',
+                originalError: error
             })
-            alert('Routine created successfully!')
-            reset()
-            router.back()
-        } catch (error) {
-            alert('Failed to create routine')
-            console.error(error)
-        }
+        )
+
+        result.match(
+            () => {
+                alert('Routine created successfully!')
+                reset()
+                router.back()
+            },
+            (error) => {
+                alert('Failed to create routine')
+                console.error(error)
+            }
+        )
     }
 
     const handleUpdateExercise = (exerciseId: string, field: 'sets' | 'reps', value: string) => {

@@ -10,13 +10,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
 import { SignOutButton } from '@/components/auth/SignOut'
 import { Button } from '@/components/Button'
-import { useMutation, useQuery } from 'convex/react'
 import { api } from '@/utils/convex'
+import { wrapConvexMutation } from '@/utils/result'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import { useWorkoutSession } from '@/utils/useWorkoutSession'
 import { useUser } from '@clerk/clerk-expo'
 import { Ionicons } from '@expo/vector-icons'
 import { FlashList } from '@shopify/flash-list'
+import { useMutation, useQuery } from 'convex/react'
 
 export default function HomePage() {
     const { user } = useUser()
@@ -63,14 +64,7 @@ export default function HomePage() {
                 <TouchableOpacity
                     style={styles.activeWorkoutBanner}
                     onPress={() => {
-                        // Navigate to the workout - use routineId if available, otherwise use a special quick workout route
-                        if (activeSession.routineId) {
-                            router.push(`/workout/${activeSession.routineId}`)
-                        } else {
-                            // For quick workouts, we need to resume based on workoutId
-                            // For now, navigate to a quick workout page
-                            router.push('/workout/quick')
-                        }
+                        router.push('/workout/active')
                     }}
                 >
                     <View style={styles.activeWorkoutInfo}>
@@ -93,18 +87,12 @@ export default function HomePage() {
 
             {/* Action Buttons */}
             <View style={styles.actionButtons}>
-                <Pressable
-                    style={styles.actionButton}
-                    onPress={() => router.push('/create')}
-                >
+                <Pressable style={styles.actionButton} onPress={() => router.push('/create')}>
                     <Ionicons name="add-circle" size={24} color="#007AFF" />
                     <Text style={styles.actionButtonText}>Create Routine</Text>
                 </Pressable>
 
-                <Pressable
-                    style={styles.actionButton}
-                    onPress={() => router.push('/exercises')}
-                >
+                <Pressable style={styles.actionButton} onPress={() => router.push('/exercises')}>
                     <Ionicons name="list" size={24} color="#007AFF" />
                     <Text style={styles.actionButtonText}>Browse Exercises</Text>
                 </Pressable>
@@ -150,8 +138,28 @@ export default function HomePage() {
                                     </View>
 
                                     <TouchableOpacity
-                                        onPress={() => {
-                                            void deleteRoutineMutation({ id: item._id })
+                                        onPress={async () => {
+                                            const result = await wrapConvexMutation(
+                                                deleteRoutineMutation,
+                                                { id: item._id },
+                                                (error) => ({
+                                                    type: 'mutation_error' as const,
+                                                    message: 'Failed to delete routine',
+                                                    originalError: error
+                                                })
+                                            )
+
+                                            result.match(
+                                                () => {
+                                                    // Success - routine deleted
+                                                },
+                                                (error) => {
+                                                    console.error(
+                                                        'Failed to delete routine:',
+                                                        error
+                                                    )
+                                                }
+                                            )
                                         }}
                                     >
                                         <Ionicons name="trash-bin" size={20} color="#007AFF" />

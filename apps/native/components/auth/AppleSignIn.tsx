@@ -2,6 +2,7 @@ import * as React from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
+import { fromThrowable } from '@/utils/result'
 import { useSSO } from '@clerk/clerk-expo'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
@@ -42,24 +43,47 @@ export default function AppleSignIn() {
 
     const onPress = async () => {
         setIsLoading(true)
-        try {
-            const { createdSessionId, signIn, signUp, setActive } = await startSSOFlow({
-                strategy: 'oauth_apple'
+        const result = await fromThrowable(
+            () => startSSOFlow({ strategy: 'oauth_apple' }),
+            (error) => ({
+                type: 'oauth_error' as const,
+                message: 'Failed to start OAuth flow',
+                originalError: error
             })
+        )
 
-            if (createdSessionId) {
-                // Session was created successfully
-                await setActive!({ session: createdSessionId })
-                router.replace('/(home)')
-            } else {
-                // Use signIn or signUp for next steps such as MFA
-                console.log('Additional steps required:', { signIn, signUp })
+        result.match(
+            async ({ createdSessionId, signIn, signUp, setActive }) => {
+                if (createdSessionId) {
+                    // Session was created successfully
+                    const setActiveResult = await fromThrowable(
+                        () => setActive!({ session: createdSessionId }),
+                        (error) => ({
+                            type: 'session_error' as const,
+                            message: 'Failed to set active session',
+                            originalError: error
+                        })
+                    )
+
+                    setActiveResult.match(
+                        () => {
+                            router.replace('/(home)')
+                        },
+                        (err) => {
+                            console.error('Set active session error:', JSON.stringify(err, null, 2))
+                        }
+                    )
+                } else {
+                    // Use signIn or signUp for next steps such as MFA
+                    console.log('Additional steps required:', { signIn, signUp })
+                }
+            },
+            (err) => {
+                console.error('OAuth error:', JSON.stringify(err, null, 2))
             }
-        } catch (err) {
-            console.error('OAuth error:', JSON.stringify(err, null, 2))
-        } finally {
-            setIsLoading(false)
-        }
+        )
+
+        setIsLoading(false)
     }
 
     return (

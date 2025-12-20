@@ -3,12 +3,23 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import { ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
+import { err, ok, Result } from 'neverthrow'
 
-if (!process.env.EXPO_PUBLIC_CONVEX_URL) {
-    throw new Error('Missing EXPO_PUBLIC_CONVEX_URL in your .env file')
+function getConvexUrl(): Result<string, Error> {
+    const url = process.env.EXPO_PUBLIC_CONVEX_URL
+    if (!url) {
+        return err(new Error('Missing EXPO_PUBLIC_CONVEX_URL in your .env file'))
+    }
+    return ok(url)
 }
 
-const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL)
+const convexUrlResult = getConvexUrl()
+if (convexUrlResult.isErr()) {
+    throw convexUrlResult.error
+}
+const convexUrl = convexUrlResult.value
+
+const convex = new ConvexReactClient(convexUrl)
 
 export default function RootLayout() {
     return (
