@@ -1,0 +1,32 @@
+{
+  "name": "exercise",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
+  },
+  "devDependencies": {
+    "prettier": "3.7.4",
+    "turbo": "2.6.2"
+  },
+  "engines": {
+    "node": ">=20.19.4"
+  },
+  "packageManager": "pnpm@10.19.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@clerk/shared",
+      "@tailwindcss/oxide",
+      "browser-tabs-lock",
+      "bufferutil",
+      "core-js",
+      "esbuild",
+      "sharp",
+      "unrs-resolver",
+      "utf-8-validate"
+    ]
+  }
+}
