@@ -7,7 +7,7 @@
         "ios": "expo run:ios",
         "start": "expo start",
         "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
-        "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write --ignore-path ../../.prettierignore",
+        "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
         "web": "expo start --web",
         "dev": "expo run:ios --device 00008030-0004301A2620C02E"
     },
@@ -56,6 +56,7 @@
     "devDependencies": {
         "@babel/core": "^7.20.0",
         "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+        "@tools/prettier-config": "workspace:*",
         "@types/minimatch": "^6.0.0",
         "@types/node": "22.19.1",
         "@types/react": "~19.1.10",

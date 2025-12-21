@@ -19,6 +19,5 @@
         "@tools/tsconfig": "workspace:*",
         "@types/node": "22.19.1",
         "typescript": "^5.9.3"
-    },
-    "prettier": "@tools/prettier-config"
+    }
 }
