@@ -11,6 +11,7 @@ coverage
 # cache directories
 **/.cache/
 .cache/
+*.tsbuildinfo
 
 # next.js
 .next/
