@@ -6,9 +6,14 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache --ignore-path .prettierignore",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache --ignore-path .prettierignore",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "lint:ws": "pnpm dlx sherif@latest"
   },
   "devDependencies": {
+    "@tools/eslint-config": "workspace:*",
     "prettier": "3.7.4",
     "turbo": "2.6.2"
   },

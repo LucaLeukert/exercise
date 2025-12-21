@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { ActivityIndicator, Pressable, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 import { fromThrowable } from '@/utils/result'
@@ -82,10 +82,7 @@ export default function AppleSignIn() {
                             router.replace('/(home)')
                         },
                         (err) => {
-                            console.error(
-                                'Set active session error:',
-                                JSON.stringify(err, null, 2)
-                            )
+                            console.error('Set active session error:', JSON.stringify(err, null, 2))
                         }
                     )
                 } catch (error) {

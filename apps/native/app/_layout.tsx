@@ -1,4 +1,4 @@
-import { Slot, Stack } from 'expo-router'
+import { Slot } from 'expo-router'
 import { ClerkProvider, useAuth } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import { ConvexReactClient } from 'convex/react'

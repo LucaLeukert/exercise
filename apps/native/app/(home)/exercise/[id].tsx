@@ -81,7 +81,7 @@ export default function ExerciseDetailPage() {
     // Show error state
     if (error || !exercise) {
         console.error('Exercise Database Error:', error)
-        
+
         return (
             <View style={[styles.container, styles.centerContent]}>
                 <Text style={styles.errorText}>{error}</Text>

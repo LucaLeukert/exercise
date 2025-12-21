@@ -1,12 +1,9 @@
-# Fullstack monorepo template feat. Expo, Turbo, Next.js, Convex, Clerk
+# Fullstack monorepo template feat. Expo, Turbo, Convex, Clerk
 
-This is a modern TypeScript monorepo template with AI web and native apps
-featuring:
+This is a modern TypeScript monorepo template with a native app featuring:
 
 - Turborepo: Monorepo management
 - React 19: Latest React with concurrent features
-- Next.js 16: Web app & marketing page with App Router
-- Tailwind CSS v4: Modern CSS-first configuration
 - React Native [Expo](https://expo.dev/): Mobile/native app with New Architecture
 - [Convex](https://convex.dev): Backend, database, server functions
 - [Clerk](https://clerk.dev): User authentication
@@ -15,10 +12,9 @@ featuring:
 The example app is a note taking app that can summarize notes using AI. Features
 include:
 
-- Marketing page
-- Dashboard page (web & native)
-- Note taking page (web & native)
-- Backend API that serves web & native with the same API
+- Dashboard page (native)
+- Note taking page (native)
+- Backend API that serves the native app
 - Relational database
 - End to end type safety (schema definition to frontend API clients)
 - User authentication
@@ -62,39 +58,29 @@ environment variables to get AI summaries.
 
 The `setup` command should now finish successfully.
 
-### 3. Configure both apps
+### 3. Configure the app
 
-In each app directory (`apps/web`, `apps/native`) create a `.env.local` file
+In the app directory (`apps/native`) create a `.env.local` file
 using the `.example.env` as a template and fill out your Convex and Clerk
 environment variables.
 
 - Use the `CONVEX_URL` from `packages/backend/.env.local` for
-  `{NEXT,EXPO}_PUBLIC_CONVEX_URL`.
+  `EXPO_PUBLIC_CONVEX_URL`.
 - The Clerk publishable & secret keys can be found
   [here](https://dashboard.clerk.com/last-active?path=api-keys).
 
-### 4. Run both apps
+### 4. Run the app
 
-Run the following command to run both the web and mobile apps:
+Run the following command to run the Convex backend and mobile app:
 
 ```sh
 npm run dev
 ```
 
 This will allow you to use the ⬆ and ⬇ keyboard keys to see logs for each
-of the Convex backend, web app, and mobile app separately.
+of the Convex backend and mobile app separately.
 If you'd rather see all of the logs in one place, delete the
 `"ui": "tui",` line in [turbo.json](./turbo.json).
-
-## Deploying
-
-In order to both deploy the frontend and Convex, run this as the build command from the apps/web directory:
-
-```sh
-cd ../../packages/backend && npx convex deploy --cmd 'cd ../../apps/web && turbo run build' --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL
-```
-
-There is a vercel.json file in the apps/web directory with this configuration for Vercel.
 
 ## What's inside?
 
@@ -102,7 +88,6 @@ This monorepo template includes the following packages/apps:
 
 ### Apps and Packages
 
-- `web`: a [Next.js 15](https://nextjs.org/) app with Tailwind CSS and Clerk
 - `native`: a [React Native](https://reactnative.dev/) app built with
   [expo](https://docs.expo.dev/)
 - `packages/backend`: a [Convex](https://www.convex.dev/) folder with the

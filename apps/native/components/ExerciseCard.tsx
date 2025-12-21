@@ -1,7 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
-
 import { ExerciseType } from '@packages/backend/convex/schema'
 
 interface ExerciseCardProps {
