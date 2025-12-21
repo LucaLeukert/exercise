@@ -6,7 +6,8 @@
     "dev1": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -27,6 +28,9 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@tools/prettier-config": "workspace:*",
+    "@tools/eslint-config": "workspace:*",
+    "@next/eslint-plugin-next": "^16.0.0",
     "@tailwindcss/forms": "0.5.10",
     "@tailwindcss/postcss": "4.1.17",
     "@types/node": "^24.10.1",
@@ -35,7 +39,9 @@
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.7",
     "postcss": "8.5.6",
+    "typescript-eslint": "^8.46.2",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3"
-  }
+  },
+  "prettier": "@tools/prettier-config"
 }

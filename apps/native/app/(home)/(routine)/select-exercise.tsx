@@ -1,4 +1,3 @@
-import type { ExerciseFiltersType } from '@packages/backend/convex/schema'
 import { useMemo, useState } from 'react'
 import {
     ActivityIndicator,
@@ -17,6 +16,8 @@ import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import { Ionicons } from '@expo/vector-icons'
 import { FlashList } from '@shopify/flash-list'
 import { useDebounce } from 'use-debounce'
+
+import type { ExerciseFiltersType } from '@packages/backend/convex/schema'
 
 export default function SelectExercisePage() {
     const { exercises: selectedExercises, addExercise } = useRoutineStore()

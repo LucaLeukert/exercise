@@ -82,10 +82,7 @@ export default function AppleSignIn() {
                             router.replace('/(home)')
                         },
                         (err) => {
-                            console.error(
-                                'Set active session error:',
-                                JSON.stringify(err, null, 2)
-                            )
+                            console.error('Set active session error:', JSON.stringify(err, null, 2))
                         }
                     )
                 } catch (error) {

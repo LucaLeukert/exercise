@@ -36,3 +36,6 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+# bv (beads viewer) local config and caches
+.bv/

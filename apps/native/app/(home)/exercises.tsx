@@ -21,8 +21,8 @@ import {
     ScrollLargeHeaderProps
 } from '@codeherence/react-native-header'
 import { Ionicons } from '@expo/vector-icons'
-import { useDebounce } from 'use-debounce'
 import { ExerciseFiltersType } from '@packages/backend/convex/schema'
+import { useDebounce } from 'use-debounce'
 
 const HeaderComponent: React.FC<ScrollHeaderProps & { total: number }> = ({
     showNavBar,
