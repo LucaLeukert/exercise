@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { err, ok, Result } from 'neverthrow'
+import { Result } from 'neverthrow'
 
 import type { ExerciseType } from '@packages/backend/convex/schema'
 
