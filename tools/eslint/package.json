@@ -27,8 +27,10 @@
         "@tools/prettier-config": "workspace:*",
         "@tools/tsconfig": "workspace:*",
         "@types/node": "22.19.1",
+        "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
         "eslint": "^9.38.0",
         "prettier": "^3.6.2",
+        "prettier-plugin-tailwindcss": "^0.5.11",
         "typescript": "^5.9.3"
     },
     "prettier": "@tools/prettier-config"

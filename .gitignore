@@ -8,6 +8,8 @@ node_modules
 # testing
 coverage
 
+**/.**cache**/
+
 # next.js
 .next/
 .swc/
@@ -39,3 +41,5 @@ yarn-error.log*
 
 # bv (beads viewer) local config and caches
 .bv/
+
+apps/native/.cache/.prettiercache

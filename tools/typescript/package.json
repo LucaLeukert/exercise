@@ -3,5 +3,8 @@
   "private": true,
   "files": [
     "*.json"
-  ]
+  ],
+  "scripts": {
+    "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --ignore-path ../../.gitignore"
+  }
 }

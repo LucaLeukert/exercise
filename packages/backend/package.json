@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "convex dev",
     "setup": "convex dev --until-success",
-    "typecheck": "tsc --noEmit -p convex"
+    "typecheck": "tsc --noEmit -p convex",
+    "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --ignore-path ../../.gitignore"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +15,7 @@
     "openai": "^6.9.1"
   },
   "devDependencies": {
+    "@types/node": "^22.19.1",
     "typescript": "5.9.3"
   }
 }

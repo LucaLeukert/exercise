@@ -59,14 +59,13 @@
         "../../../node_modules/.pnpm/typescript@5.9.3/node_modules/typescript/lib/lib.decorators.legacy.d.ts",
         "../../../node_modules/.pnpm/prettier@3.7.4/node_modules/prettier/doc.d.ts",
         "../../../node_modules/.pnpm/prettier@3.7.4/node_modules/prettier/index.d.ts",
-        "../../../node_modules/prettier/index.d.ts",
-        "../../../node_modules/prettier-plugin-tailwindcss/dist/index.d.ts",
-        "../../../node_modules/@babel/types/lib/index.d.ts",
-        "../../../node_modules/@babel/parser/typings/babel-parser.d.ts",
-        "../../../node_modules/@ianvs/prettier-plugin-sort-imports/types/index.d.ts",
+        "../../../node_modules/.pnpm/prettier-plugin-tailwindcss@0.5.14_@ianvs+prettier-plugin-sort-imports@4.7.0_prettier@3.7.4__prettier@3.7.4/node_modules/prettier-plugin-tailwindcss/dist/index.d.ts",
+        "../../../node_modules/.pnpm/@babel+types@7.28.5/node_modules/@babel/types/lib/index.d.ts",
+        "../../../node_modules/.pnpm/@babel+parser@7.28.5/node_modules/@babel/parser/typings/babel-parser.d.ts",
+        "../../../node_modules/.pnpm/@ianvs+prettier-plugin-sort-imports@4.7.0_prettier@3.7.4/node_modules/@ianvs/prettier-plugin-sort-imports/types/index.d.ts",
         "../index.js"
     ],
-    "fileIdsList": [[58], [62], [59, 61, 63, 64], [59, 61, 64]],
+    "fileIdsList": [[61], [59, 60, 62, 63], [59, 60, 63], [58]],
     "fileInfos": [
         {
             "version": "c430d44666289dae81f30fa7b2edebf186ecc91a2d4c71266ea6ae76388792e1",
@@ -354,10 +353,6 @@
             "impliedFormat": 1
         },
         {
-            "version": "705f2f47316c603344bb9e1aeb80be9f761feb0cd92bfee0bbc0cfd7abe9aae3",
-            "impliedFormat": 1
-        },
-        {
             "version": "19cdc7a62c97c683d73cab19a92135bb3709825a87b284108b0a385f02995b84",
             "impliedFormat": 1
         },
@@ -378,7 +373,7 @@
             "signature": "74899821152aa6af5a8e145f429cdf95e5ba33f3a34c582f4cac9a98d413605d"
         }
     ],
-    "root": [65],
+    "root": [64],
     "options": {
         "allowJs": true,
         "checkJs": true,
@@ -391,13 +386,12 @@
         "tsBuildInfoFile": "./tsbuildinfo.json"
     },
     "referencedMap": [
-        [59, 1],
+        [62, 1],
         [63, 2],
-        [64, 3],
-        [61, 4],
-        [60, 1],
-        [65, 4]
+        [60, 3],
+        [59, 4],
+        [64, 3]
     ],
-    "affectedFilesPendingEmit": [65],
+    "affectedFilesPendingEmit": [64],
     "version": "5.9.3"
 }

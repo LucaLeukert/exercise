@@ -1,3 +1,5 @@
+**/ios
+**/android
 apps/native/ios
 apps/native/android
 .env
