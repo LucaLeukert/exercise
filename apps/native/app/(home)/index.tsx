@@ -476,8 +476,8 @@ export default function HomePage() {
                         {availableThemes.map((themeOption) => (
                             <Pressable
                                 key={themeOption}
-                                onPress={() => {
-                                    void setTheme(themeOption)
+                                onPress={async () => {
+                                    await setTheme(themeOption)
                                     setShowThemePicker(false)
                                 }}
                                 style={{
