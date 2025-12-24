@@ -1,9 +1,9 @@
 import { ColorTokens } from '../colors'
-import { ShadowStyle, ShadowKey } from '../shadows'
-import { spacing, borderRadius } from '../spacing'
-import { typography, fontSizes, fontWeights, lineHeights } from '../typography'
-import { lightColors, lightShadows } from './light'
+import { ShadowKey, ShadowStyle } from '../shadows'
+import { borderRadius, spacing } from '../spacing'
+import { fontSizes, fontWeights, lineHeights, typography } from '../typography'
 import { darkColors, darkShadows } from './dark'
+import { lightColors, lightShadows } from './light'
 import { specialColors, specialShadows } from './special'
 
 /**
@@ -111,4 +111,3 @@ export function hasTheme(name: string): boolean {
 export { lightColors, lightShadows } from './light'
 export { darkColors, darkShadows } from './dark'
 export { specialColors, specialShadows } from './special'
-

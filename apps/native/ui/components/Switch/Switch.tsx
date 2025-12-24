@@ -61,9 +61,7 @@ export function Switch({
     }
 
     const sizeStyle = sizeValues[size]
-    const thumbOffset = checked
-        ? sizeStyle.track.width - sizeStyle.thumb - 2
-        : 2
+    const thumbOffset = checked ? sizeStyle.track.width - sizeStyle.thumb - 2 : 2
 
     return (
         <Pressable
@@ -128,4 +126,3 @@ const styles = StyleSheet.create({
         position: 'absolute'
     }
 })
-

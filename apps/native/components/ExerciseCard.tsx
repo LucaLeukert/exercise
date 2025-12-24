@@ -1,9 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useRouter } from 'expo-router'
+import { Badge, Card, useTheme } from '@/ui'
 import { Ionicons } from '@expo/vector-icons'
 import { ExerciseType } from '@packages/backend/convex/schema'
-
-import { Card, Badge, useTheme } from '@/ui'
 
 interface ExerciseCardProps {
     exercise: ExerciseType
@@ -13,7 +12,10 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
     const router = useRouter()
     const { theme } = useTheme()
 
-    const levelVariantMap: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'outline'> = {
+    const levelVariantMap: Record<
+        string,
+        'primary' | 'secondary' | 'success' | 'warning' | 'outline'
+    > = {
         beginner: 'success',
         intermediate: 'warning',
         advanced: 'primary',
@@ -84,11 +86,7 @@ export function ExerciseCard({ exercise }: ExerciseCardProps) {
                     </View>
                 </View>
                 <View style={styles.arrowIcon}>
-                    <Ionicons
-                        name="chevron-forward"
-                        size={24}
-                        color={theme.colors.textTertiary}
-                    />
+                    <Ionicons name="chevron-forward" size={24} color={theme.colors.textTertiary} />
                 </View>
             </Card>
         </Pressable>

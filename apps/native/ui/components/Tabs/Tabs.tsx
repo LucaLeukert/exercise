@@ -184,9 +184,7 @@ export function TabsTrigger({
                     {
                         color: isActive ? theme.colors.text : theme.colors.textSecondary,
                         fontSize: theme.fontSizes.sm,
-                        fontWeight: isActive
-                            ? theme.fontWeights.semibold
-                            : theme.fontWeights.normal
+                        fontWeight: isActive ? theme.fontWeights.semibold : theme.fontWeights.normal
                     },
                     textStyle
                 ]}
@@ -220,4 +218,3 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
-

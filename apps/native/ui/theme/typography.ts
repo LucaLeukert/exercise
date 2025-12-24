@@ -124,4 +124,3 @@ export const typography: Record<string, TextStyle> = {
 }
 
 export type TypographyVariant = keyof typeof typography
-

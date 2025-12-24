@@ -386,7 +386,12 @@ export default function ActiveWorkoutPage() {
                     return (
                         <View style={[styles.setContainer, { marginBottom: theme.spacing[4] }]}>
                             {isFirstSet && (
-                                <View style={[styles.exerciseHeader, { marginBottom: theme.spacing[3] }]}>
+                                <View
+                                    style={[
+                                        styles.exerciseHeader,
+                                        { marginBottom: theme.spacing[3] }
+                                    ]}
+                                >
                                     <Text
                                         style={[
                                             styles.exerciseName,
@@ -455,7 +460,12 @@ export default function ActiveWorkoutPage() {
                                         </Text>
                                     </View>
 
-                                    <SetInputRow set={item} index={index} onUpdate={handleUpdateSet} theme={theme} />
+                                    <SetInputRow
+                                        set={item}
+                                        index={index}
+                                        onUpdate={handleUpdateSet}
+                                        theme={theme}
+                                    />
 
                                     <TogglePrimitive.Root
                                         style={({ pressed }) => [
@@ -481,7 +491,9 @@ export default function ActiveWorkoutPage() {
                                         }
                                     >
                                         <Ionicons
-                                            name={item.completed ? 'checkmark' : 'checkmark-outline'}
+                                            name={
+                                                item.completed ? 'checkmark' : 'checkmark-outline'
+                                            }
                                             size={24}
                                             color={
                                                 item.completed

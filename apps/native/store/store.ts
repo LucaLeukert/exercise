@@ -1,10 +1,18 @@
-import { create } from 'zustand'
 import { useColorScheme } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { create } from 'zustand'
 
 import type { ExerciseType } from '@packages/backend/convex/schema'
+
 import { ColorTokens } from '../ui/theme/colors'
-import { getTheme, getThemeNames, hasTheme, registerTheme, Theme, ThemeName } from '../ui/theme/themes'
+import {
+    getTheme,
+    getThemeNames,
+    hasTheme,
+    registerTheme,
+    Theme,
+    ThemeName
+} from '../ui/theme/themes'
 
 const THEME_STORAGE_KEY = '@app/theme'
 
@@ -134,7 +142,7 @@ export const useThemeStore = create<ThemeState>((set, get) => {
 
             const theme = getTheme(name)
             const currentState = get()
-            
+
             // If manually setting a theme, disable followSystem
             const newFollowSystem = currentState.followSystem ? false : currentState.followSystem
 
@@ -188,7 +196,10 @@ export const useThemeStore = create<ThemeState>((set, get) => {
             }
         },
 
-        registerCustomTheme: (name: string, themeConfig: Partial<Theme> & { colors: ColorTokens }) => {
+        registerCustomTheme: (
+            name: string,
+            themeConfig: Partial<Theme> & { colors: ColorTokens }
+        ) => {
             registerTheme(name, themeConfig)
             set({ availableThemes: getThemeNames() })
         },

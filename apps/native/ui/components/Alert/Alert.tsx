@@ -62,9 +62,7 @@ export function Alert({
                     text: theme.colors.success
                 },
                 warning: {
-                    background: theme.isDark
-                        ? 'rgba(255, 149, 0, 0.15)'
-                        : 'rgba(255, 149, 0, 0.1)',
+                    background: theme.isDark ? 'rgba(255, 149, 0, 0.15)' : 'rgba(255, 149, 0, 0.1)',
                     border: theme.colors.warning,
                     text: theme.colors.warning
                 },
@@ -138,4 +136,3 @@ const styles = StyleSheet.create({
     title: {},
     description: {}
 })
-

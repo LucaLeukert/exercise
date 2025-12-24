@@ -1,6 +1,6 @@
-import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native'
-
+import { ImageStyle, StyleSheet, TextStyle, ViewStyle } from 'react-native'
 import { useThemeStore } from '@/store/store'
+
 import { Theme } from '../theme/themes'
 
 export interface ThemeContextValue {

@@ -1,5 +1,4 @@
 import { SafeAreaView } from 'react-native'
-
 import { useTheme } from '@/ui'
 
 export const Container = ({ children }: { children: React.ReactNode }) => {

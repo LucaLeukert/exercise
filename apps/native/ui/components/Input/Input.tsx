@@ -249,4 +249,3 @@ const styles = StyleSheet.create({
     },
     helperText: {}
 })
-

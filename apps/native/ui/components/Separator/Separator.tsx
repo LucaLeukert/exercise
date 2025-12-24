@@ -30,11 +30,7 @@ export interface SeparatorProps {
  * <Separator spacing="lg" />
  * ```
  */
-export function Separator({
-    orientation = 'horizontal',
-    style,
-    spacing = 'md'
-}: SeparatorProps) {
+export function Separator({ orientation = 'horizontal', style, spacing = 'md' }: SeparatorProps) {
     const { theme } = useTheme()
 
     const spacingValues: Record<string, number> = {
@@ -63,4 +59,3 @@ export function Separator({
 
     return <View style={[baseStyle, style]} />
 }
-

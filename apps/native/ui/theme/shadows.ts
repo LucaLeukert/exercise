@@ -117,4 +117,3 @@ export type ShadowKey = keyof typeof shadowsLight
 export function applyShadow(shadow: ShadowStyle): ViewStyle {
     return shadow
 }
-

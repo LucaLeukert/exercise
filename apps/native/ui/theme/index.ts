@@ -25,4 +25,3 @@ export type { Theme, ThemeName } from './themes'
 // Theme provider
 export { ThemeProvider } from './ThemeProvider'
 export type { ThemeProviderProps } from './ThemeProvider'
-

@@ -16,4 +16,3 @@ export type {
     DialogFooterProps,
     DialogCloseProps
 } from './Dialog'
-

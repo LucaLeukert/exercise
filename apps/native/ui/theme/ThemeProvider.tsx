@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react'
 import { useColorScheme } from 'react-native'
-
 import { useThemeStore } from '@/store/store'
+
 import { getTheme } from './themes'
 
 export interface ThemeProviderProps {
@@ -18,13 +18,8 @@ export function ThemeProvider({
     defaultFollowSystem = true
 }: ThemeProviderProps) {
     const systemColorScheme = useColorScheme()
-    const {
-        isLoaded,
-        followSystem,
-        themeName,
-        initializeTheme,
-        updateSystemColorScheme
-    } = useThemeStore()
+    const { isLoaded, followSystem, themeName, initializeTheme, updateSystemColorScheme } =
+        useThemeStore()
 
     // Initialize theme on mount
     useEffect(() => {

@@ -46,4 +46,3 @@ export const lightColors: ColorTokens = {
  * Light theme shadows
  */
 export const lightShadows: Record<string, ShadowStyle> = shadowsLight
-

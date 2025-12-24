@@ -47,4 +47,3 @@ export const darkColors: ColorTokens = {
  * Dark theme shadows
  */
 export const darkShadows: Record<string, ShadowStyle> = shadowsDark
-

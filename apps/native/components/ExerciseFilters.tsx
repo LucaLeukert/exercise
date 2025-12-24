@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Badge, Button, useTheme } from '@/ui'
 import { Ionicons } from '@expo/vector-icons'
 
 import type { ExerciseFiltersType } from '@packages/backend/convex/schema'
-
-import { Badge, Button, useTheme } from '@/ui'
 
 interface Props {
     visible: boolean
@@ -232,7 +231,9 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
                                 >
                                     <Badge
                                         variant={
-                                            localFilters.category === category ? 'primary' : 'outline'
+                                            localFilters.category === category
+                                                ? 'primary'
+                                                : 'outline'
                                         }
                                         size="md"
                                     >

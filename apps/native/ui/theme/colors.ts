@@ -98,4 +98,3 @@ export const palette = {
     whiteAlpha50: 'rgba(255, 255, 255, 0.5)',
     whiteAlpha30: 'rgba(255, 255, 255, 0.3)'
 } as const
-

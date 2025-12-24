@@ -143,11 +143,7 @@ export function DialogContent({ children, style }: DialogContentProps) {
 export function DialogHeader({ children, style }: DialogHeaderProps) {
     const { theme } = useTheme()
 
-    return (
-        <View style={[{ marginBottom: theme.spacing[4] }, style]}>
-            {children}
-        </View>
-    )
+    return <View style={[{ marginBottom: theme.spacing[4] }, style]}>{children}</View>
 }
 
 /**
@@ -204,11 +200,7 @@ export function DialogFooter({ children, style }: DialogFooterProps) {
 
     return (
         <View
-            style={[
-                styles.footer,
-                { marginTop: theme.spacing[6], gap: theme.spacing[3] },
-                style
-            ]}
+            style={[styles.footer, { marginTop: theme.spacing[6], gap: theme.spacing[3] }, style]}
         >
             {children}
         </View>
@@ -238,4 +230,3 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
-

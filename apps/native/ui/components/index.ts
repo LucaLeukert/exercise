@@ -18,14 +18,7 @@ export { Input } from './Input'
 export type { InputProps, InputSize } from './Input'
 
 // Card
-export {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent,
-    CardFooter
-} from './Card'
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card'
 export type {
     CardProps,
     CardElevation,
@@ -91,4 +84,3 @@ export type { SwitchProps, SwitchSize } from './Switch'
 // Alert
 export { Alert } from './Alert'
 export type { AlertProps, AlertVariant } from './Alert'
-

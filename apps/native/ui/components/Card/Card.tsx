@@ -134,9 +134,7 @@ export function CardHeader({ children, style }: CardHeaderProps) {
     const { theme } = useTheme()
 
     return (
-        <View style={[styles.header, { marginBottom: theme.spacing[3] }, style]}>
-            {children}
-        </View>
+        <View style={[styles.header, { marginBottom: theme.spacing[3] }, style]}>{children}</View>
     )
 }
 
@@ -228,4 +226,3 @@ const styles = StyleSheet.create({
         gap: 8
     }
 })
-

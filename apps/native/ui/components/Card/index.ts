@@ -8,4 +8,3 @@ export type {
     CardContentProps,
     CardFooterProps
 } from './Card'
-

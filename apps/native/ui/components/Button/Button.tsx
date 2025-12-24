@@ -204,7 +204,12 @@ export const Button = forwardRef<View, ButtonProps>(
                 disabled={disabled || loading}
                 {...pressableProps}
                 style={({ pressed }) => {
-                    const variantStyles = getVariantStyles(variant, theme, pressed, disabled || loading)
+                    const variantStyles = getVariantStyles(
+                        variant,
+                        theme,
+                        pressed,
+                        disabled || loading
+                    )
 
                     return [
                         styles.base,
@@ -216,7 +221,12 @@ export const Button = forwardRef<View, ButtonProps>(
                 }}
             >
                 {({ pressed }) => {
-                    const variantStyles = getVariantStyles(variant, theme, pressed, disabled || loading)
+                    const variantStyles = getVariantStyles(
+                        variant,
+                        theme,
+                        pressed,
+                        disabled || loading
+                    )
                     const textColor = variantStyles.text.color as string
 
                     return (
@@ -225,10 +235,18 @@ export const Button = forwardRef<View, ButtonProps>(
                                 <ActivityIndicator
                                     size="small"
                                     color={textColor}
-                                    style={{ width: sizeStyles.iconSize, height: sizeStyles.iconSize }}
+                                    style={{
+                                        width: sizeStyles.iconSize,
+                                        height: sizeStyles.iconSize
+                                    }}
                                 />
                             ) : leftIcon ? (
-                                <View style={{ width: sizeStyles.iconSize, height: sizeStyles.iconSize }}>
+                                <View
+                                    style={{
+                                        width: sizeStyles.iconSize,
+                                        height: sizeStyles.iconSize
+                                    }}
+                                >
                                     {leftIcon}
                                 </View>
                             ) : null}
@@ -250,7 +268,12 @@ export const Button = forwardRef<View, ButtonProps>(
                             )}
 
                             {rightIcon && !loading && (
-                                <View style={{ width: sizeStyles.iconSize, height: sizeStyles.iconSize }}>
+                                <View
+                                    style={{
+                                        width: sizeStyles.iconSize,
+                                        height: sizeStyles.iconSize
+                                    }}
+                                >
                                     {rightIcon}
                                 </View>
                             )}
@@ -277,4 +300,3 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     }
 })
-
