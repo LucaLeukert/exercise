@@ -35,6 +35,7 @@ export default function HomePage() {
     const { user } = useUser()
     const { theme, themeName, setTheme, availableThemes, isDark } = useTheme()
     const [showThemePicker, setShowThemePicker] = useState(false)
+    const [showClearConfirm, setShowClearConfirm] = useState(false)
 
     const routines = useQuery(api.routines.list, {})
     const isLoading = routines === undefined
@@ -271,7 +272,7 @@ export default function HomePage() {
                         },
                         theme.shadows.sm
                     ]}
-                    onPress={() => clearDatabase()}
+                    onPress={() => setShowClearConfirm(true)}
                 >
                     <Ionicons name="trash-bin" size={24} color={theme.colors.error} />
                     <Text
@@ -465,6 +466,42 @@ export default function HomePage() {
                     />
                 )}
             </View>
+
+            {/* Clear Database Confirmation Dialog */}
+            <Dialog open={showClearConfirm} onOpenChange={setShowClearConfirm}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Clear Exercise Database</DialogTitle>
+                    </DialogHeader>
+                    <Text
+                        style={{
+                            color: theme.colors.textSecondary,
+                            fontSize: theme.fontSizes.md,
+                            textAlign: 'center',
+                            marginTop: theme.spacing[2],
+                            marginBottom: theme.spacing[4]
+                        }}
+                    >
+                        This action cannot be undone. All locally stored exercise data will be
+                        permanently deleted. You will need to sync again to restore exercises.
+                    </Text>
+                    <DialogFooter>
+                        <DialogClose
+                            variant="ghost"
+                            title="Cancel"
+                            onClose={() => setShowClearConfirm(false)}
+                        />
+                        <Button
+                            title="Clear Database"
+                            variant="destructive"
+                            onPress={() => {
+                                clearDatabase()
+                                setShowClearConfirm(false)
+                            }}
+                        />
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Theme Picker Dialog */}
             <Dialog open={showThemePicker} onOpenChange={setShowThemePicker}>

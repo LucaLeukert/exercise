@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
-import { Button } from '@/ui'
+import { Button, useTheme } from '@/ui'
 import { fromThrowable } from '@/utils/result'
 import { useSSO } from '@clerk/clerk-expo'
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -12,6 +12,7 @@ WebBrowser.maybeCompleteAuthSession()
 export default function AppleSignIn() {
     const { startSSOFlow } = useSSO()
     const router = useRouter()
+    const { theme } = useTheme()
     const [isLoading, setIsLoading] = React.useState(false)
 
     const onPress = async () => {
@@ -78,8 +79,11 @@ export default function AppleSignIn() {
             onPress={onPress}
             disabled={isLoading}
             loading={isLoading}
-            leftIcon={<Ionicons name="logo-apple" size={20} color="#fff" />}
-            style={{ backgroundColor: '#000' }}
+            leftIcon={
+                <Ionicons name="logo-apple" size={20} color={theme.colors.primaryForeground} />
+            }
+            variant="primary"
+            style={{ backgroundColor: theme.colors.primary }}
             textStyle={{ letterSpacing: 0.5 }}
             fullWidth
         />

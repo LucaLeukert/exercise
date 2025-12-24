@@ -231,8 +231,11 @@ export default function SelectExercisePage() {
                     const isSelected = selectedIds.has(item.externalId)
                     return (
                         <Pressable
-                            onPress={() => handleSelectExercise(item.externalId)}
-                            disabled={isSelected}
+                            onPress={() => {
+                                if (!isSelected) {
+                                    handleSelectExercise(item.externalId)
+                                }
+                            }}
                         >
                             <Card
                                 elevation="sm"

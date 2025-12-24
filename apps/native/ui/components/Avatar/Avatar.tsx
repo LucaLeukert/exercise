@@ -66,7 +66,9 @@ export function Avatar({ source, fallback, size = 'md', style, textStyle }: Avat
     // Get initials from fallback
     const initials = fallback
         ? fallback
-              .split(' ')
+              .trim()
+              .split(/\s+/)
+              .filter((word) => word.length > 0)
               .map((word) => word[0])
               .join('')
               .slice(0, 2)

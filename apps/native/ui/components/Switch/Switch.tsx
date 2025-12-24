@@ -26,6 +26,10 @@ export interface SwitchProps {
     style?: ViewStyle
     /** Label style override */
     labelStyle?: TextStyle
+    /** Accessibility label (falls back to label if provided) */
+    accessibilityLabel?: string
+    /** Accessibility hint */
+    accessibilityHint?: string
 }
 
 /**
@@ -47,7 +51,9 @@ export function Switch({
     size = 'md',
     disabled = false,
     style,
-    labelStyle
+    labelStyle,
+    accessibilityLabel,
+    accessibilityHint
 }: SwitchProps) {
     const { theme } = useTheme()
 
@@ -67,6 +73,14 @@ export function Switch({
         <Pressable
             onPress={() => !disabled && onCheckedChange(!checked)}
             style={[styles.container, { opacity: disabled ? 0.5 : 1 }, style]}
+            accessible={true}
+            accessibilityRole="switch"
+            accessibilityState={{
+                checked: Boolean(checked),
+                disabled: Boolean(disabled)
+            }}
+            accessibilityLabel={accessibilityLabel || label}
+            accessibilityHint={accessibilityHint}
         >
             <View
                 style={[
