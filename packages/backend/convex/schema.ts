@@ -122,6 +122,33 @@ export const workoutProgressValidator = v.object({
 
 export type WorkoutProgress = Infer<typeof workoutProgressValidator>;
 
+// User profile
+export const userProfileValidator = v.object({
+  userId: v.string(),
+  username: v.optional(v.string()),
+  bio: v.optional(v.string()),
+  profileImageUrl: v.optional(v.string()),
+  totalWorkouts: v.number(),
+  totalWorkoutTime: v.number(),
+  level: v.union(
+    v.literal("beginner"),
+    v.literal("intermediate"),
+    v.literal("expert"),
+    v.null(),
+  ),
+  createdAt: v.number(),
+  updatedAt: v.number(),
+});
+
+export type UserProfile = Infer<typeof userProfileValidator>;
+
+// Friend status enum
+export const friendStatusEnum = v.union(
+  v.literal("pending"),
+  v.literal("accepted"),
+  v.literal("blocked"),
+);
+
 export default defineSchema({
   exercises: defineTable(exerciseValidator).index("by_externalId", [
     "externalId",
@@ -156,4 +183,21 @@ export default defineSchema({
     .index("by_userId", ["userId"])
     .index("by_userId_startedAt", ["userId", "startedAt"])
     .index("by_userId_status", ["userId", "status"]),
+
+  userProfiles: defineTable(userProfileValidator)
+    .index("by_userId", ["userId"])
+    .index("by_username", ["username"]),
+
+  friends: defineTable({
+    requesterId: v.string(),
+    recipientId: v.string(),
+    status: friendStatusEnum,
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_requesterId", ["requesterId"])
+    .index("by_recipientId", ["recipientId"])
+    .index("by_recipientId_status", ["recipientId", "status"])
+    .index("by_requesterId_recipientId", ["requesterId", "recipientId"])
+    .index("by_requesterId_status", ["requesterId", "status"]),
 });

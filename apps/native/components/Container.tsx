@@ -1,13 +1,19 @@
-import { SafeAreaView, StyleSheet } from 'react-native'
+import { SafeAreaView } from 'react-native'
+
+import { useTheme } from '@/ui'
 
 export const Container = ({ children }: { children: React.ReactNode }) => {
-    return <SafeAreaView style={styles.container}>{children}</SafeAreaView>
-}
+    const { theme } = useTheme()
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        backgroundColor: 'white'
-    }
-})
+    return (
+        <SafeAreaView
+            style={{
+                flex: 1,
+                padding: theme.spacing[6],
+                backgroundColor: theme.colors.background
+            }}
+        >
+            {children}
+        </SafeAreaView>
+    )
+}

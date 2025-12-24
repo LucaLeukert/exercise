@@ -1,8 +1,10 @@
 import { useState } from 'react'
-import { Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 
 import type { ExerciseFiltersType } from '@packages/backend/convex/schema'
+
+import { Badge, Button, useTheme } from '@/ui'
 
 interface Props {
     visible: boolean
@@ -61,6 +63,7 @@ const EQUIPMENT = [
 const MECHANICS = ['isolation', 'compound'] as const
 
 export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters }: Props) {
+    const { theme } = useTheme()
     const [localFilters, setLocalFilters] = useState<ExerciseFiltersType>(filters)
 
     const toggleMuscle = (muscle: (typeof MUSCLES)[number], type: 'primary' | 'secondary') => {
@@ -95,29 +98,77 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
 
     return (
         <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-            <View style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={onClose}>
-                        <Ionicons name="close" size={28} color="#000" />
-                    </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Filters</Text>
-                    <TouchableOpacity onPress={handleClear}>
-                        <Text style={styles.clearText}>Clear</Text>
-                    </TouchableOpacity>
+            <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+                <View
+                    style={[
+                        styles.header,
+                        {
+                            borderBottomColor: theme.colors.border,
+                            paddingHorizontal: theme.spacing[5],
+                            paddingVertical: theme.spacing[4]
+                        }
+                    ]}
+                >
+                    <Pressable onPress={onClose}>
+                        <Ionicons name="close" size={28} color={theme.colors.text} />
+                    </Pressable>
+                    <Text
+                        style={[
+                            styles.headerTitle,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.semibold
+                            }
+                        ]}
+                    >
+                        Filters
+                    </Text>
+                    <Pressable onPress={handleClear}>
+                        <Text
+                            style={[
+                                styles.clearText,
+                                {
+                                    color: theme.colors.primary,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.medium
+                                }
+                            ]}
+                        >
+                            Clear
+                        </Text>
+                    </Pressable>
                 </View>
 
                 <ScrollView style={styles.content}>
                     {/* Level */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Level</Text>
-                        <View style={styles.chipContainer}>
+                    <View
+                        style={[
+                            styles.section,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[5],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[3]
+                                }
+                            ]}
+                        >
+                            Level
+                        </Text>
+                        <View style={[styles.chipContainer, { gap: theme.spacing[2] }]}>
                             {LEVELS.map((level) => (
-                                <TouchableOpacity
+                                <Pressable
                                     key={level}
-                                    style={[
-                                        styles.chip,
-                                        localFilters.level === level && styles.chipActive
-                                    ]}
                                     onPress={() =>
                                         setLocalFilters({
                                             ...localFilters,
@@ -128,30 +179,47 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
                                         })
                                     }
                                 >
-                                    <Text
-                                        style={[
-                                            styles.chipText,
-                                            localFilters.level === level && styles.chipTextActive
-                                        ]}
+                                    <Badge
+                                        variant={
+                                            localFilters.level === level ? 'primary' : 'outline'
+                                        }
+                                        size="md"
                                     >
                                         {level}
-                                    </Text>
-                                </TouchableOpacity>
+                                    </Badge>
+                                </Pressable>
                             ))}
                         </View>
                     </View>
 
                     {/* Category */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Category</Text>
-                        <View style={styles.chipContainer}>
+                    <View
+                        style={[
+                            styles.section,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[5],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[3]
+                                }
+                            ]}
+                        >
+                            Category
+                        </Text>
+                        <View style={[styles.chipContainer, { gap: theme.spacing[2] }]}>
                             {CATEGORIES.map((category) => (
-                                <TouchableOpacity
+                                <Pressable
                                     key={category}
-                                    style={[
-                                        styles.chip,
-                                        localFilters.category === category && styles.chipActive
-                                    ]}
                                     onPress={() =>
                                         setLocalFilters({
                                             ...localFilters,
@@ -162,87 +230,137 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
                                         })
                                     }
                                 >
-                                    <Text
-                                        style={[
-                                            styles.chipText,
-                                            localFilters.category === category &&
-                                                styles.chipTextActive
-                                        ]}
+                                    <Badge
+                                        variant={
+                                            localFilters.category === category ? 'primary' : 'outline'
+                                        }
+                                        size="md"
                                     >
                                         {category}
-                                    </Text>
-                                </TouchableOpacity>
+                                    </Badge>
+                                </Pressable>
                             ))}
                         </View>
                     </View>
 
                     {/* Primary Muscles */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Primary Muscles</Text>
-                        <View style={styles.chipContainer}>
+                    <View
+                        style={[
+                            styles.section,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[5],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[3]
+                                }
+                            ]}
+                        >
+                            Primary Muscles
+                        </Text>
+                        <View style={[styles.chipContainer, { gap: theme.spacing[2] }]}>
                             {MUSCLES.map((muscle) => (
-                                <TouchableOpacity
+                                <Pressable
                                     key={muscle}
-                                    style={[
-                                        styles.chip,
-                                        localFilters.primaryMuscles?.includes(muscle) &&
-                                            styles.chipActive
-                                    ]}
                                     onPress={() => toggleMuscle(muscle, 'primary')}
                                 >
-                                    <Text
-                                        style={[
-                                            styles.chipText,
-                                            localFilters.primaryMuscles?.includes(muscle) &&
-                                                styles.chipTextActive
-                                        ]}
+                                    <Badge
+                                        variant={
+                                            localFilters.primaryMuscles?.includes(muscle)
+                                                ? 'primary'
+                                                : 'outline'
+                                        }
+                                        size="md"
                                     >
                                         {muscle}
-                                    </Text>
-                                </TouchableOpacity>
+                                    </Badge>
+                                </Pressable>
                             ))}
                         </View>
                     </View>
 
                     {/* Secondary Muscles */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Secondary Muscles</Text>
-                        <View style={styles.chipContainer}>
+                    <View
+                        style={[
+                            styles.section,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[5],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[3]
+                                }
+                            ]}
+                        >
+                            Secondary Muscles
+                        </Text>
+                        <View style={[styles.chipContainer, { gap: theme.spacing[2] }]}>
                             {MUSCLES.map((muscle) => (
-                                <TouchableOpacity
+                                <Pressable
                                     key={muscle}
-                                    style={[
-                                        styles.chip,
-                                        localFilters.secondaryMuscles?.includes(muscle) &&
-                                            styles.chipActive
-                                    ]}
                                     onPress={() => toggleMuscle(muscle, 'secondary')}
                                 >
-                                    <Text
-                                        style={[
-                                            styles.chipText,
-                                            localFilters.secondaryMuscles?.includes(muscle) &&
-                                                styles.chipTextActive
-                                        ]}
+                                    <Badge
+                                        variant={
+                                            localFilters.secondaryMuscles?.includes(muscle)
+                                                ? 'primary'
+                                                : 'outline'
+                                        }
+                                        size="md"
                                     >
                                         {muscle}
-                                    </Text>
-                                </TouchableOpacity>
+                                    </Badge>
+                                </Pressable>
                             ))}
                         </View>
                     </View>
 
                     {/* Equipment */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Equipment</Text>
-                        <View style={styles.chipContainer}>
+                    <View
+                        style={[
+                            styles.section,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[5],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[3]
+                                }
+                            ]}
+                        >
+                            Equipment
+                        </Text>
+                        <View style={[styles.chipContainer, { gap: theme.spacing[2] }]}>
                             {EQUIPMENT.map((equipment) => (
-                                <TouchableOpacity
+                                <Pressable
                                     key={equipment}
-                                    style={[
-                                        styles.chip,
-                                        localFilters.equipment === equipment && styles.chipActive
-                                    ]}
                                     onPress={() =>
                                         setLocalFilters({
                                             ...localFilters,
@@ -253,31 +371,49 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
                                         })
                                     }
                                 >
-                                    <Text
-                                        style={[
-                                            styles.chipText,
-                                            localFilters.equipment === equipment &&
-                                                styles.chipTextActive
-                                        ]}
+                                    <Badge
+                                        variant={
+                                            localFilters.equipment === equipment
+                                                ? 'primary'
+                                                : 'outline'
+                                        }
+                                        size="md"
                                     >
                                         {equipment}
-                                    </Text>
-                                </TouchableOpacity>
+                                    </Badge>
+                                </Pressable>
                             ))}
                         </View>
                     </View>
 
                     {/* Mechanic */}
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Mechanic</Text>
-                        <View style={styles.chipContainer}>
+                    <View
+                        style={[
+                            styles.section,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[5],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[3]
+                                }
+                            ]}
+                        >
+                            Mechanic
+                        </Text>
+                        <View style={[styles.chipContainer, { gap: theme.spacing[2] }]}>
                             {MECHANICS.map((mechanic) => (
-                                <TouchableOpacity
+                                <Pressable
                                     key={mechanic}
-                                    style={[
-                                        styles.chip,
-                                        localFilters.mechanic === mechanic && styles.chipActive
-                                    ]}
                                     onPress={() =>
                                         setLocalFilters({
                                             ...localFilters,
@@ -288,27 +424,37 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
                                         })
                                     }
                                 >
-                                    <Text
-                                        style={[
-                                            styles.chipText,
-                                            localFilters.mechanic === mechanic &&
-                                                styles.chipTextActive
-                                        ]}
+                                    <Badge
+                                        variant={
+                                            localFilters.mechanic === mechanic
+                                                ? 'primary'
+                                                : 'outline'
+                                        }
+                                        size="md"
                                     >
                                         {mechanic}
-                                    </Text>
-                                </TouchableOpacity>
+                                    </Badge>
+                                </Pressable>
                             ))}
                         </View>
                     </View>
                 </ScrollView>
 
-                <View style={styles.footer}>
-                    <TouchableOpacity style={styles.applyButton} onPress={handleApply}>
-                        <Text style={styles.applyButtonText}>
-                            Apply {activeFilterCount > 0 && `(${activeFilterCount})`}
-                        </Text>
-                    </TouchableOpacity>
+                <View
+                    style={[
+                        styles.footer,
+                        {
+                            padding: theme.spacing[5],
+                            borderTopWidth: 1,
+                            borderTopColor: theme.colors.border
+                        }
+                    ]}
+                >
+                    <Button
+                        title={`Apply ${activeFilterCount > 0 ? `(${activeFilterCount})` : ''}`}
+                        onPress={handleApply}
+                        fullWidth
+                    />
                 </View>
             </View>
         </Modal>
@@ -317,83 +463,26 @@ export function ExerciseFiltersModal({ visible, onClose, filters, onApplyFilters
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff'
+        flex: 1
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingHorizontal: 20,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0'
+        borderBottomWidth: 1
     },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#000'
-    },
-    clearText: {
-        fontSize: 16,
-        color: '#007AFF',
-        fontWeight: '500'
-    },
+    headerTitle: {},
+    clearText: {},
     content: {
         flex: 1
     },
     section: {
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0'
+        borderBottomWidth: 1
     },
-    sectionTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        marginBottom: 12
-    },
+    sectionTitle: {},
     chipContainer: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8
+        flexWrap: 'wrap'
     },
-    chip: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: '#f0f0f0',
-        borderWidth: 1,
-        borderColor: '#e0e0e0'
-    },
-    chipActive: {
-        backgroundColor: '#007AFF',
-        borderColor: '#007AFF'
-    },
-    chipText: {
-        fontSize: 14,
-        color: '#333',
-        textTransform: 'capitalize'
-    },
-    chipTextActive: {
-        color: '#fff',
-        fontWeight: '500'
-    },
-    footer: {
-        padding: 20,
-        borderTopWidth: 1,
-        borderTopColor: '#f0f0f0'
-    },
-    applyButton: {
-        backgroundColor: '#007AFF',
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center'
-    },
-    applyButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '600'
-    }
+    footer: {}
 })

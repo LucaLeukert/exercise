@@ -22,8 +22,13 @@
 export * from './theme'
 
 // Hooks
-export { useTheme, createThemedStyles, useThemeColor, useThemeSpacing, useThemeShadow } from './hooks/useTheme'
+export {
+    useTheme,
+    createThemedStyles,
+    useThemeColor,
+    useThemeSpacing,
+    useThemeShadow
+} from './hooks/useTheme'
 
 // Components
 export * from './components'
-

@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Redirect, Stack } from 'expo-router'
 import AppleSignIn from '@/components/auth/AppleSignIn'
+import GoogleSignIn from '@/components/auth/GoogleSignIn'
 import { Authenticated, Unauthenticated } from 'convex/react'
 
 export default function AuthPage() {
@@ -26,9 +27,11 @@ export default function AuthPage() {
                         <View style={styles.ctaSection}>
                             <Text style={styles.ctaTitle}>Get Started</Text>
                             <Text style={styles.ctaDescription}>
-                                Sign in with your Apple ID to begin tracking
+                                Sign in to begin tracking your fitness journey
                             </Text>
                             <View style={styles.signInContainer}>
+                                <GoogleSignIn />
+                                <View style={styles.signInSpacer} />
                                 <AppleSignIn />
                             </View>
                         </View>
@@ -154,6 +157,9 @@ const styles = StyleSheet.create({
     },
     signInContainer: {
         marginBottom: 0
+    },
+    signInSpacer: {
+        height: 12
     },
     footer: {
         fontSize: 12,
