@@ -381,7 +381,7 @@ export default function HomePage() {
                                         {item.name}
                                     </Text>
                                     <Badge variant="secondary" size="sm">
-                                        {item.exercises.length} exercises
+                                        {`${item.exercises.length} exercises`}
                                     </Badge>
 
                                     <TouchableOpacity

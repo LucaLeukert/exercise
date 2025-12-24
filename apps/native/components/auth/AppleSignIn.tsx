@@ -1,11 +1,10 @@
 import * as React from 'react'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
+import { Button } from '@/ui'
 import { fromThrowable } from '@/utils/result'
 import { useSSO } from '@clerk/clerk-expo'
 import Ionicons from '@expo/vector-icons/Ionicons'
-
-import { Button } from '@/ui'
 
 // Required for OAuth flow
 WebBrowser.maybeCompleteAuthSession()

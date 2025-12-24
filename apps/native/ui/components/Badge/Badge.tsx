@@ -130,9 +130,15 @@ export function Badge({
     const variantStyles = getVariantStyles()
     const sizeStyles = getSizeStyles()
 
+    // Check if children is a primitive (string, number) that needs to be wrapped in Text
+    const isPrimitive =
+        typeof children === 'string' ||
+        typeof children === 'number' ||
+        children == null
+
     return (
         <View style={[styles.badge, sizeStyles.container, variantStyles.container, style]}>
-            {typeof children === 'string' ? (
+            {isPrimitive ? (
                 <Text style={[sizeStyles.text, variantStyles.text, textStyle]}>{children}</Text>
             ) : (
                 children
