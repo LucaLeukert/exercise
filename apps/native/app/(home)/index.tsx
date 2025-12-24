@@ -542,7 +542,7 @@ export default function HomePage() {
                         ))}
                     </View>
                     <DialogFooter>
-                        <DialogClose variant="ghost" title="Close" />
+                        <DialogClose variant="ghost" title="Close" onClose={() => setShowThemePicker(false)} />
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
