@@ -477,8 +477,7 @@ export default function HomePage() {
                             <Pressable
                                 key={themeOption}
                                 onPress={() => {
-                                    console.log('setting theme to', themeOption)
-                                    setTheme(themeOption)
+                                    void setTheme(themeOption)
                                     setShowThemePicker(false)
                                 }}
                                 style={{
