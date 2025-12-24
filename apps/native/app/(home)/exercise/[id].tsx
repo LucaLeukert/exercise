@@ -10,6 +10,8 @@ import {
 } from 'react-native'
 import PagerView, { PagerViewOnPageScrollEventData } from 'react-native-pager-view'
 import { Stack, useLocalSearchParams } from 'expo-router'
+import { Badge, useTheme } from '@/ui'
+import { Theme } from '@/ui/theme/themes'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
@@ -17,14 +19,16 @@ const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
 const Pagination = ({
     scrollOffsetAnimatedValue,
     positionAnimatedValue,
-    amountOfDots
+    amountOfDots,
+    theme
 }: {
     scrollOffsetAnimatedValue: Animated.Value
     positionAnimatedValue: Animated.Value
     amountOfDots: number
+    theme: Theme
 }) => {
     return (
-        <View style={styles.pagination}>
+        <View style={[styles.pagination, { gap: theme.spacing[2] }]}>
             {Array(amountOfDots)
                 .fill(0)
                 .map((_, index) => {
@@ -48,7 +52,7 @@ const Pagination = ({
                                 }
                             ]}
                         >
-                            <View style={[styles.paginationDot, { backgroundColor: '#007AFF' }]} />
+                            <View style={[styles.paginationDot, { backgroundColor: theme.colors.primary }]} />
                         </Animated.View>
                     )
                 })}
@@ -57,6 +61,7 @@ const Pagination = ({
 }
 
 export default function ExerciseDetailPage() {
+    const { theme } = useTheme()
     const { id } = useLocalSearchParams<{ id: string }>()
 
     const { exercises: allExercises, isInitialized, isSyncing, error } = useExerciseDatabase()
@@ -69,9 +74,23 @@ export default function ExerciseDetailPage() {
     // Show loading state during initial sync
     if (!isInitialized || (isSyncing && allExercises.length === 0)) {
         return (
-            <View style={[styles.container, styles.centerContent]}>
-                <ActivityIndicator size="large" color="#007AFF" />
-                <Text style={styles.loadingText}>
+            <View
+                style={[
+                    styles.container,
+                    styles.centerContent,
+                    { backgroundColor: theme.colors.background }
+                ]}
+            >
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <Text
+                    style={[
+                        styles.loadingText,
+                        {
+                            color: theme.colors.textTertiary,
+                            fontSize: theme.fontSizes.sm
+                        }
+                    ]}
+                >
                     {isSyncing ? 'Syncing exercise database...' : 'Loading exercises...'}
                 </Text>
             </View>
@@ -83,9 +102,35 @@ export default function ExerciseDetailPage() {
         console.error('Exercise Database Error:', error)
 
         return (
-            <View style={[styles.container, styles.centerContent]}>
-                <Text style={styles.errorText}>{error}</Text>
-                <Text style={styles.errorSubtext}>
+            <View
+                style={[
+                    styles.container,
+                    styles.centerContent,
+                    { backgroundColor: theme.colors.background }
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.errorText,
+                        {
+                            color: theme.colors.error,
+                            fontSize: theme.fontSizes.xl,
+                            fontWeight: theme.fontWeights.semibold,
+                            marginBottom: theme.spacing[2]
+                        }
+                    ]}
+                >
+                    {error || 'Exercise not found'}
+                </Text>
+                <Text
+                    style={[
+                        styles.errorSubtext,
+                        {
+                            color: theme.colors.textSecondary,
+                            fontSize: theme.fontSizes.sm
+                        }
+                    ]}
+                >
                     Please check your internet connection and try again.
                 </Text>
             </View>
@@ -93,30 +138,61 @@ export default function ExerciseDetailPage() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.backgroundSecondary }]}>
             <Stack.Screen
                 options={{
                     title: exercise.name,
                     headerShown: true
                 }}
             />
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.contentContainer}>
+            <ScrollView style={styles.scrollView} contentContainerStyle={[styles.contentContainer, { paddingBottom: theme.spacing[8] }]}>
                 {/* Header Section */}
-                <View style={styles.headerSection}>
-                    <Text style={styles.title}>{exercise.name}</Text>
-                    <View style={styles.metaRow}>
-                        <View style={styles.categoryBadge}>
-                            <Text style={styles.categoryText}>{exercise.category}</Text>
-                        </View>
-                        <View style={styles.levelBadge}>
-                            <Text style={styles.levelText}>{exercise.level}</Text>
-                        </View>
+                <View
+                    style={[
+                        styles.headerSection,
+                        {
+                            backgroundColor: theme.colors.surface,
+                            padding: theme.spacing[5],
+                            borderBottomWidth: 1,
+                            borderBottomColor: theme.colors.border
+                        }
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.title,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes['4xl'],
+                                fontWeight: theme.fontWeights.extrabold,
+                                marginBottom: theme.spacing[3]
+                            }
+                        ]}
+                    >
+                        {exercise.name}
+                    </Text>
+                    <View style={[styles.metaRow, { gap: theme.spacing[2] }]}>
+                        <Badge variant="secondary" size="md">
+                            {exercise.category}
+                        </Badge>
+                        <Badge
+                            variant={
+                                exercise.level === 'beginner'
+                                    ? 'success'
+                                    : exercise.level === 'intermediate'
+                                      ? 'warning'
+                                      : 'primary'
+                            }
+                            size="md"
+                        >
+                            {exercise.level}
+                        </Badge>
                     </View>
                 </View>
 
                 {/* Images Section */}
                 {exercise.images && exercise.images.length > 0 && (
-                    <View style={styles.imagesSection}>
+                    <View style={[styles.imagesSection, { backgroundColor: theme.colors.surface }]}>
                         <AnimatedPagerView
                             style={styles.pagerView}
                             initialPage={0}
@@ -132,7 +208,7 @@ export default function ExerciseDetailPage() {
                             {exercise.images.map((image, index) => (
                                 <View
                                     key={String(index)}
-                                    style={styles.imageContainer}
+                                    style={[styles.imageContainer, { padding: theme.spacing[2.5] }]}
                                     collapsable={false}
                                 >
                                     <Image
@@ -145,61 +221,215 @@ export default function ExerciseDetailPage() {
                                 </View>
                             ))}
                         </AnimatedPagerView>
-                        <View style={styles.paginationOverlay}>
+                        <View style={[styles.paginationOverlay, { paddingBottom: theme.spacing[5] }]}>
                             <Pagination
                                 scrollOffsetAnimatedValue={scrollOffsetAnimatedValue}
                                 positionAnimatedValue={positionAnimatedValue}
                                 amountOfDots={exercise.images.length}
+                                theme={theme}
                             />
                         </View>
                     </View>
                 )}
 
                 {/* Details Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Details</Text>
-                    <View style={styles.detailRow}>
-                        <Text style={styles.detailLabel}>Equipment:</Text>
-                        <Text style={styles.detailValue}>{exercise.equipment || 'None'}</Text>
+                <View
+                    style={[
+                        styles.section,
+                        {
+                            backgroundColor: theme.colors.surface,
+                            padding: theme.spacing[5],
+                            marginTop: theme.spacing[3]
+                        }
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.sectionTitle,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.bold,
+                                marginBottom: theme.spacing[4]
+                            }
+                        ]}
+                    >
+                        Details
+                    </Text>
+                    <View
+                        style={[
+                            styles.detailRow,
+                            {
+                                paddingVertical: theme.spacing[2],
+                                borderBottomColor: theme.colors.border
+                            }
+                        ]}
+                    >
+                        <Text
+                            style={[
+                                styles.detailLabel,
+                                {
+                                    color: theme.colors.textSecondary,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.medium
+                                }
+                            ]}
+                        >
+                            Equipment:
+                        </Text>
+                        <Text
+                            style={[
+                                styles.detailValue,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold
+                                }
+                            ]}
+                        >
+                            {exercise.equipment || 'None'}
+                        </Text>
                     </View>
                     {exercise.force && (
-                        <View style={styles.detailRow}>
-                            <Text style={styles.detailLabel}>Force:</Text>
-                            <Text style={styles.detailValue}>{exercise.force}</Text>
+                        <View
+                            style={[
+                                styles.detailRow,
+                                {
+                                    paddingVertical: theme.spacing[2],
+                                    borderBottomColor: theme.colors.border
+                                }
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.detailLabel,
+                                    {
+                                        color: theme.colors.textSecondary,
+                                        fontSize: theme.fontSizes.md,
+                                        fontWeight: theme.fontWeights.medium
+                                    }
+                                ]}
+                            >
+                                Force:
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.detailValue,
+                                    {
+                                        color: theme.colors.text,
+                                        fontSize: theme.fontSizes.md,
+                                        fontWeight: theme.fontWeights.semibold
+                                    }
+                                ]}
+                            >
+                                {exercise.force}
+                            </Text>
                         </View>
                     )}
                     {exercise.mechanic && (
-                        <View style={styles.detailRow}>
-                            <Text style={styles.detailLabel}>Mechanic:</Text>
-                            <Text style={styles.detailValue}>{exercise.mechanic}</Text>
+                        <View
+                            style={[
+                                styles.detailRow,
+                                {
+                                    paddingVertical: theme.spacing[2],
+                                    borderBottomColor: theme.colors.border
+                                }
+                            ]}
+                        >
+                            <Text
+                                style={[
+                                    styles.detailLabel,
+                                    {
+                                        color: theme.colors.textSecondary,
+                                        fontSize: theme.fontSizes.md,
+                                        fontWeight: theme.fontWeights.medium
+                                    }
+                                ]}
+                            >
+                                Mechanic:
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.detailValue,
+                                    {
+                                        color: theme.colors.text,
+                                        fontSize: theme.fontSizes.md,
+                                        fontWeight: theme.fontWeights.semibold
+                                    }
+                                ]}
+                            >
+                                {exercise.mechanic}
+                            </Text>
                         </View>
                     )}
                 </View>
 
                 {/* Muscles Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Target Muscles</Text>
-                    <View style={styles.muscleSection}>
-                        <Text style={styles.muscleLabel}>Primary:</Text>
-                        <View style={styles.muscleChips}>
+                <View
+                    style={[
+                        styles.section,
+                        {
+                            backgroundColor: theme.colors.surface,
+                            padding: theme.spacing[5],
+                            marginTop: theme.spacing[3]
+                        }
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.sectionTitle,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.bold,
+                                marginBottom: theme.spacing[4]
+                            }
+                        ]}
+                    >
+                        Target Muscles
+                    </Text>
+                    <View style={[styles.muscleSection, { marginBottom: theme.spacing[4] }]}>
+                        <Text
+                            style={[
+                                styles.muscleLabel,
+                                {
+                                    color: theme.colors.textSecondary,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[2]
+                                }
+                            ]}
+                        >
+                            Primary:
+                        </Text>
+                        <View style={[styles.muscleChips, { gap: theme.spacing[2] }]}>
                             {exercise.primaryMuscles.map((muscle, index) => (
-                                <View key={index} style={styles.muscleChip}>
-                                    <Text style={styles.muscleChipText}>{muscle}</Text>
-                                </View>
+                                <Badge key={index} variant="primary" size="md">
+                                    {muscle}
+                                </Badge>
                             ))}
                         </View>
                     </View>
                     {exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0 && (
                         <View style={styles.muscleSection}>
-                            <Text style={styles.muscleLabel}>Secondary:</Text>
-                            <View style={styles.muscleChips}>
+                            <Text
+                                style={[
+                                    styles.muscleLabel,
+                                    {
+                                        color: theme.colors.textSecondary,
+                                        fontSize: theme.fontSizes.md,
+                                        fontWeight: theme.fontWeights.semibold,
+                                        marginBottom: theme.spacing[2]
+                                    }
+                                ]}
+                            >
+                                Secondary:
+                            </Text>
+                            <View style={[styles.muscleChips, { gap: theme.spacing[2] }]}>
                                 {exercise.secondaryMuscles.map((muscle, index) => (
-                                    <View
-                                        key={index}
-                                        style={[styles.muscleChip, styles.secondaryChip]}
-                                    >
-                                        <Text style={styles.muscleChipText}>{muscle}</Text>
-                                    </View>
+                                    <Badge key={index} variant="secondary" size="md">
+                                        {muscle}
+                                    </Badge>
                                 ))}
                             </View>
                         </View>
@@ -207,14 +437,73 @@ export default function ExerciseDetailPage() {
                 </View>
 
                 {/* Instructions Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Instructions</Text>
+                <View
+                    style={[
+                        styles.section,
+                        {
+                            backgroundColor: theme.colors.surface,
+                            padding: theme.spacing[5],
+                            marginTop: theme.spacing[3]
+                        }
+                    ]}
+                >
+                    <Text
+                        style={[
+                            styles.sectionTitle,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.bold,
+                                marginBottom: theme.spacing[4]
+                            }
+                        ]}
+                    >
+                        Instructions
+                    </Text>
                     {exercise.instructions.map((instruction, index) => (
-                        <View key={index} style={styles.instructionItem}>
-                            <View style={styles.instructionNumber}>
-                                <Text style={styles.instructionNumberText}>{index + 1}</Text>
+                        <View
+                            key={index}
+                            style={[
+                                styles.instructionItem,
+                                { marginBottom: theme.spacing[4], gap: theme.spacing[3] }
+                            ]}
+                        >
+                            <View
+                                style={[
+                                    styles.instructionNumber,
+                                    {
+                                        width: 28,
+                                        height: 28,
+                                        borderRadius: 14,
+                                        backgroundColor: theme.colors.primary
+                                    }
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.instructionNumberText,
+                                        {
+                                            color: theme.colors.primaryForeground,
+                                            fontSize: theme.fontSizes.sm,
+                                            fontWeight: theme.fontWeights.bold
+                                        }
+                                    ]}
+                                >
+                                    {index + 1}
+                                </Text>
                             </View>
-                            <Text style={styles.instructionText}>{instruction}</Text>
+                            <Text
+                                style={[
+                                    styles.instructionText,
+                                    {
+                                        color: theme.colors.text,
+                                        fontSize: theme.fontSizes.md,
+                                        lineHeight: theme.fontSizes.md * 1.47
+                                    }
+                                ]}
+                            >
+                                {instruction}
+                            </Text>
                         </View>
                     ))}
                 </View>
@@ -225,68 +514,18 @@ export default function ExerciseDetailPage() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9'
+        flex: 1
     },
     scrollView: {
         flex: 1
     },
-    contentContainer: {
-        paddingBottom: 32
-    },
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    errorContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
-    },
-    headerSection: {
-        backgroundColor: '#fff',
-        padding: 20,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0'
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: '800',
-        color: '#000',
-        marginBottom: 12
-    },
+    contentContainer: {},
+    headerSection: {},
+    title: {},
     metaRow: {
-        flexDirection: 'row',
-        gap: 8
-    },
-    categoryBadge: {
-        backgroundColor: '#e3f2fd',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16
-    },
-    categoryText: {
-        color: '#1976d2',
-        fontSize: 12,
-        fontWeight: '600',
-        textTransform: 'capitalize'
-    },
-    levelBadge: {
-        backgroundColor: '#f3e5f5',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16
-    },
-    levelText: {
-        color: '#7b1fa2',
-        fontSize: 12,
-        fontWeight: '600',
-        textTransform: 'capitalize'
+        flexDirection: 'row'
     },
     imagesSection: {
-        backgroundColor: '#fff',
         height: 300,
         position: 'relative'
     },
@@ -296,8 +535,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 10
+        alignItems: 'center'
     },
     exerciseImage: {
         width: '100%',
@@ -307,96 +545,42 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         left: 0,
-        right: 0,
-        paddingBottom: 20
+        right: 0
     },
-    section: {
-        backgroundColor: '#fff',
-        padding: 20,
-        marginTop: 12
-    },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 16
-    },
+    section: {},
+    sectionTitle: {},
     detailRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 8,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f5f5f5'
+        borderBottomWidth: 1
     },
     detailLabel: {
-        fontSize: 15,
-        color: '#666',
-        fontWeight: '500'
+        textTransform: 'capitalize'
     },
     detailValue: {
-        fontSize: 15,
-        color: '#000',
-        fontWeight: '600',
         textTransform: 'capitalize'
     },
-    muscleSection: {
-        marginBottom: 16
-    },
-    muscleLabel: {
-        fontSize: 15,
-        color: '#666',
-        fontWeight: '600',
-        marginBottom: 8
-    },
+    muscleSection: {},
+    muscleLabel: {},
     muscleChips: {
         flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8
-    },
-    muscleChip: {
-        backgroundColor: '#007AFF',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16
-    },
-    secondaryChip: {
-        backgroundColor: '#e0e0e0'
-    },
-    muscleChipText: {
-        color: '#fff',
-        fontSize: 13,
-        fontWeight: '600',
-        textTransform: 'capitalize'
+        flexWrap: 'wrap'
     },
     instructionItem: {
-        flexDirection: 'row',
-        marginBottom: 16,
-        gap: 12
+        flexDirection: 'row'
     },
     instructionNumber: {
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        backgroundColor: '#007AFF',
         justifyContent: 'center',
         alignItems: 'center'
     },
-    instructionNumberText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: '700'
-    },
+    instructionNumberText: {},
     instructionText: {
-        flex: 1,
-        fontSize: 15,
-        color: '#333',
-        lineHeight: 22
+        flex: 1
     },
     pagination: {
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
-        gap: 8
+        alignItems: 'center'
     },
     paginationDot: {
         width: 8,
@@ -415,19 +599,10 @@ const styles = StyleSheet.create({
         padding: 20
     },
     errorText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#ff3b30',
-        marginBottom: 8,
         textAlign: 'center'
     },
     errorSubtext: {
-        fontSize: 14,
-        color: '#666',
         textAlign: 'center'
     },
-    loadingText: {
-        fontSize: 14,
-        color: '#999'
-    }
+    loadingText: {}
 })

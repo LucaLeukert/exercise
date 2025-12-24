@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { Button, useTheme } from '@/ui'
 import { RoutineId } from '@/utils/convex'
 import { useWorkoutSession, WorkoutSet } from '@/utils/useWorkoutSession'
 import { isValidConvexId } from '@/utils/workoutUtils'
@@ -10,6 +11,7 @@ import { api } from '@packages/backend'
 import { useQuery } from 'convex/react'
 
 export default function StartWorkoutPage() {
+    const { theme } = useTheme()
     const { id } = useLocalSearchParams<{ id: string }>()
     const isQuickWorkout = !isValidConvexId(id)
 
@@ -65,10 +67,10 @@ export default function StartWorkoutPage() {
 
     if (isLoading) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
                 <Stack.Screen options={{ title: 'Workout', headerShown: true }} />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
                 </View>
             </SafeAreaView>
         )
@@ -76,10 +78,20 @@ export default function StartWorkoutPage() {
 
     if (!isQuickWorkout && !routine) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
                 <Stack.Screen options={{ title: 'Workout', headerShown: true }} />
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>Routine not found</Text>
+                <View style={[styles.errorContainer, { padding: theme.spacing[5] }]}>
+                    <Text
+                        style={[
+                            styles.errorText,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.md
+                            }
+                        ]}
+                    >
+                        Routine not found
+                    </Text>
                 </View>
             </SafeAreaView>
         )
@@ -88,28 +100,44 @@ export default function StartWorkoutPage() {
     // Quick workout start screen
     if (isQuickWorkout) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
                 <Stack.Screen options={{ title: 'Quick Workout', headerShown: true }} />
-                <View style={styles.preWorkoutContainer}>
-                    <Ionicons name="flash" size={80} color="#FF9500" />
-                    <Text style={styles.routineTitle}>Quick Workout</Text>
-                    <Text style={styles.routineDescription}>
+                <View style={[styles.preWorkoutContainer, { padding: theme.spacing[5] }]}>
+                    <Ionicons name="flash" size={80} color={theme.colors.warning} />
+                    <Text
+                        style={[
+                            styles.routineTitle,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes['4xl'],
+                                fontWeight: theme.fontWeights.extrabold,
+                                marginTop: theme.spacing[5],
+                                marginBottom: theme.spacing[3]
+                            }
+                        ]}
+                    >
+                        Quick Workout
+                    </Text>
+                    <Text
+                        style={[
+                            styles.routineDescription,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.md,
+                                marginBottom: theme.spacing[8]
+                            }
+                        ]}
+                    >
                         Start an empty workout and add exercises as you go
                     </Text>
-                    <TouchableOpacity
-                        style={[styles.startButton, isStarting && styles.buttonDisabled]}
+                    <Button
+                        title="Start Quick Workout"
                         onPress={handleStartWorkout}
                         disabled={isStarting}
-                    >
-                        {isStarting ? (
-                            <ActivityIndicator size="small" color="#fff" />
-                        ) : (
-                            <>
-                                <Ionicons name="play-circle" size={24} color="#fff" />
-                                <Text style={styles.startButtonText}>Start Quick Workout</Text>
-                            </>
-                        )}
-                    </TouchableOpacity>
+                        loading={isStarting}
+                        leftIcon={<Ionicons name="play-circle" size={24} color="#fff" />}
+                        size="lg"
+                    />
                 </View>
             </SafeAreaView>
         )
@@ -117,40 +145,100 @@ export default function StartWorkoutPage() {
 
     // Routine workout start screen
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <Stack.Screen options={{ title: routine?.name ?? 'Workout', headerShown: true }} />
-            <View style={styles.preWorkoutContainer}>
-                <Ionicons name="fitness" size={80} color="#007AFF" />
-                <Text style={styles.routineTitle}>{routine?.name}</Text>
+            <View style={[styles.preWorkoutContainer, { padding: theme.spacing[5] }]}>
+                <Ionicons name="fitness" size={80} color={theme.colors.primary} />
+                <Text
+                    style={[
+                        styles.routineTitle,
+                        {
+                            color: theme.colors.text,
+                            fontSize: theme.fontSizes['4xl'],
+                            fontWeight: theme.fontWeights.extrabold,
+                            marginTop: theme.spacing[5],
+                            marginBottom: theme.spacing[3]
+                        }
+                    ]}
+                >
+                    {routine?.name}
+                </Text>
                 {routine?.description && (
-                    <Text style={styles.routineDescription}>{routine.description}</Text>
+                    <Text
+                        style={[
+                            styles.routineDescription,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.md,
+                                marginBottom: theme.spacing[8]
+                            }
+                        ]}
+                    >
+                        {routine.description}
+                    </Text>
                 )}
-                <View style={styles.workoutInfo}>
+                <View style={[styles.workoutInfo, { gap: theme.spacing[10], marginBottom: theme.spacing[10] }]}>
                     <View style={styles.infoItem}>
-                        <Text style={styles.infoLabel}>Exercises</Text>
-                        <Text style={styles.infoValue}>{routine?.exercises.length ?? 0}</Text>
+                        <Text
+                            style={[
+                                styles.infoLabel,
+                                {
+                                    color: theme.colors.textTertiary,
+                                    fontSize: theme.fontSizes.sm,
+                                    marginBottom: theme.spacing[1]
+                                }
+                            ]}
+                        >
+                            Exercises
+                        </Text>
+                        <Text
+                            style={[
+                                styles.infoValue,
+                                {
+                                    color: theme.colors.primary,
+                                    fontSize: theme.fontSizes['5xl'],
+                                    fontWeight: theme.fontWeights.bold
+                                }
+                            ]}
+                        >
+                            {routine?.exercises.length ?? 0}
+                        </Text>
                     </View>
                     <View style={styles.infoItem}>
-                        <Text style={styles.infoLabel}>Total Sets</Text>
-                        <Text style={styles.infoValue}>
+                        <Text
+                            style={[
+                                styles.infoLabel,
+                                {
+                                    color: theme.colors.textTertiary,
+                                    fontSize: theme.fontSizes.sm,
+                                    marginBottom: theme.spacing[1]
+                                }
+                            ]}
+                        >
+                            Total Sets
+                        </Text>
+                        <Text
+                            style={[
+                                styles.infoValue,
+                                {
+                                    color: theme.colors.primary,
+                                    fontSize: theme.fontSizes['5xl'],
+                                    fontWeight: theme.fontWeights.bold
+                                }
+                            ]}
+                        >
                             {routine?.exercises.reduce((sum, ex) => sum + ex.sets, 0) ?? 0}
                         </Text>
                     </View>
                 </View>
-                <TouchableOpacity
-                    style={[styles.startButton, isStarting && styles.buttonDisabled]}
+                <Button
+                    title="Start Workout"
                     onPress={handleStartWorkout}
                     disabled={isStarting}
-                >
-                    {isStarting ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                        <>
-                            <Ionicons name="play-circle" size={24} color="#fff" />
-                            <Text style={styles.startButtonText}>Start Workout</Text>
-                        </>
-                    )}
-                </TouchableOpacity>
+                    loading={isStarting}
+                    leftIcon={<Ionicons name="play-circle" size={24} color="#fff" />}
+                    size="lg"
+                />
             </View>
         </SafeAreaView>
     )
@@ -158,8 +246,7 @@ export default function StartWorkoutPage() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9'
+        flex: 1
     },
     loadingContainer: {
         flex: 1,
@@ -169,69 +256,28 @@ const styles = StyleSheet.create({
     errorContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     errorText: {
-        fontSize: 16,
-        color: '#666',
         textAlign: 'center'
     },
     preWorkoutContainer: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20
+        alignItems: 'center'
     },
     routineTitle: {
-        fontSize: 28,
-        fontWeight: '800',
-        color: '#000',
-        marginTop: 20,
-        marginBottom: 12,
         textAlign: 'center'
     },
     routineDescription: {
-        fontSize: 16,
-        color: '#666',
-        textAlign: 'center',
-        marginBottom: 32
+        textAlign: 'center'
     },
     workoutInfo: {
-        flexDirection: 'row',
-        gap: 40,
-        marginBottom: 40
+        flexDirection: 'row'
     },
     infoItem: {
         alignItems: 'center'
     },
-    infoLabel: {
-        fontSize: 14,
-        color: '#999',
-        marginBottom: 4
-    },
-    infoValue: {
-        fontSize: 32,
-        fontWeight: '700',
-        color: '#007AFF'
-    },
-    startButton: {
-        backgroundColor: '#007AFF',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 32,
-        borderRadius: 12,
-        gap: 8,
-        minWidth: 200
-    },
-    startButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '700'
-    },
-    buttonDisabled: {
-        opacity: 0.6
-    }
+    infoLabel: {},
+    infoValue: {}
 })

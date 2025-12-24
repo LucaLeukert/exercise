@@ -323,7 +323,7 @@ export default function HomePage() {
                         <ActivityIndicator size="large" color={theme.colors.primary} />
                     </View>
                 ) : !routines || routines.length === 0 ? (
-                    <View style={[styles.emptyState, { paddingVertical: theme.spacing[15] }]}>
+                    <View style={[styles.emptyState, { paddingVertical: theme.spacing[16] }]}>
                         <Ionicons name="fitness" size={64} color={theme.colors.textTertiary} />
                         <Text
                             style={[
@@ -359,7 +359,7 @@ export default function HomePage() {
                             <Card
                                 elevation="sm"
                                 padding="md"
-                                style={[styles.routineCard, { marginBottom: theme.spacing[3] }]}
+                                style={{ marginBottom: theme.spacing[3] }}
                             >
                                 <View
                                     style={[

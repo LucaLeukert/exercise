@@ -2,75 +2,268 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Redirect, Stack } from 'expo-router'
 import AppleSignIn from '@/components/auth/AppleSignIn'
 import GoogleSignIn from '@/components/auth/GoogleSignIn'
+import { Card, useTheme } from '@/ui'
 import { Authenticated, Unauthenticated } from 'convex/react'
 
 export default function AuthPage() {
+    const { theme } = useTheme()
+
     return (
         <>
             <Unauthenticated>
-                <ScrollView style={styles.container}>
+                <ScrollView
+                    style={[styles.container, { backgroundColor: theme.colors.background }]}
+                >
                     <Stack.Screen
                         options={{
                             title: 'Welcome',
                             headerShown: false
                         }}
                     />
-                    <View style={styles.content}>
-                        <View style={styles.heroSection}>
-                            <Text style={styles.logo}>🏋️</Text>
-                            <Text style={styles.title}>Fitness Tracker</Text>
-                            <Text style={styles.tagline}>
+                    <View
+                        style={[
+                            styles.content,
+                            {
+                                paddingHorizontal: theme.spacing[5],
+                                paddingVertical: theme.spacing[8]
+                            }
+                        ]}
+                    >
+                        <View
+                            style={[
+                                styles.heroSection,
+                                {
+                                    marginBottom: theme.spacing[12],
+                                    paddingTop: theme.spacing[4]
+                                }
+                            ]}
+                        >
+                            <Text style={[styles.logo, { marginBottom: theme.spacing[4] }]}>
+                                🏋️
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.title,
+                                    {
+                                        color: theme.colors.text,
+                                        fontSize: theme.fontSizes['5xl'],
+                                        fontWeight: theme.fontWeights.extrabold,
+                                        marginBottom: theme.spacing[2]
+                                    }
+                                ]}
+                            >
+                                Fitness Tracker
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.tagline,
+                                    {
+                                        color: theme.colors.textSecondary,
+                                        fontSize: theme.fontSizes.md,
+                                        lineHeight: theme.fontSizes.md * 1.4
+                                    }
+                                ]}
+                            >
                                 Track your progress, achieve your goals
                             </Text>
                         </View>
 
-                        <View style={styles.ctaSection}>
-                            <Text style={styles.ctaTitle}>Get Started</Text>
-                            <Text style={styles.ctaDescription}>
+                        <View style={[styles.ctaSection, { marginBottom: theme.spacing[8] }]}>
+                            <Text
+                                style={[
+                                    styles.ctaTitle,
+                                    {
+                                        color: theme.colors.text,
+                                        fontSize: theme.fontSizes['2xl'],
+                                        fontWeight: theme.fontWeights.bold,
+                                        marginBottom: theme.spacing[2]
+                                    }
+                                ]}
+                            >
+                                Get Started
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.ctaDescription,
+                                    {
+                                        color: theme.colors.textSecondary,
+                                        fontSize: theme.fontSizes.sm,
+                                        marginBottom: theme.spacing[6],
+                                        lineHeight: theme.fontSizes.sm * 1.43
+                                    }
+                                ]}
+                            >
                                 Sign in to begin tracking your fitness journey
                             </Text>
-                            <View style={styles.signInContainer}>
+                            <View style={[styles.signInContainer, { gap: theme.spacing[3] }]}>
                                 <GoogleSignIn />
-                                <View style={styles.signInSpacer} />
                                 <AppleSignIn />
                             </View>
                         </View>
 
-                        <View style={styles.featuresSection}>
-                            <View style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>💪</Text>
-                                <Text style={styles.featureTitle}>Track Workouts</Text>
-                                <Text style={styles.featureDescription}>
+                        <View
+                            style={[
+                                styles.featuresSection,
+                                { marginBottom: theme.spacing[10], gap: theme.spacing[3] }
+                            ]}
+                        >
+                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                                <Text
+                                    style={[
+                                        styles.featureIcon,
+                                        { marginBottom: theme.spacing[3] }
+                                    ]}
+                                >
+                                    💪
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureTitle,
+                                        {
+                                            color: theme.colors.text,
+                                            fontSize: theme.fontSizes.md,
+                                            fontWeight: theme.fontWeights.bold,
+                                            marginBottom: theme.spacing[1]
+                                        }
+                                    ]}
+                                >
+                                    Track Workouts
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureDescription,
+                                        {
+                                            color: theme.colors.textSecondary,
+                                            fontSize: theme.fontSizes.sm,
+                                            lineHeight: theme.fontSizes.sm * 1.38
+                                        }
+                                    ]}
+                                >
                                     Log exercises and monitor your training
                                 </Text>
-                            </View>
+                            </Card>
 
-                            <View style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>📊</Text>
-                                <Text style={styles.featureTitle}>View Progress</Text>
-                                <Text style={styles.featureDescription}>
+                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                                <Text
+                                    style={[
+                                        styles.featureIcon,
+                                        { marginBottom: theme.spacing[3] }
+                                    ]}
+                                >
+                                    📊
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureTitle,
+                                        {
+                                            color: theme.colors.text,
+                                            fontSize: theme.fontSizes.md,
+                                            fontWeight: theme.fontWeights.bold,
+                                            marginBottom: theme.spacing[1]
+                                        }
+                                    ]}
+                                >
+                                    View Progress
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureDescription,
+                                        {
+                                            color: theme.colors.textSecondary,
+                                            fontSize: theme.fontSizes.sm,
+                                            lineHeight: theme.fontSizes.sm * 1.38
+                                        }
+                                    ]}
+                                >
                                     Visualize improvements over time
                                 </Text>
-                            </View>
+                            </Card>
 
-                            <View style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>🎯</Text>
-                                <Text style={styles.featureTitle}>Set Goals</Text>
-                                <Text style={styles.featureDescription}>
+                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                                <Text
+                                    style={[
+                                        styles.featureIcon,
+                                        { marginBottom: theme.spacing[3] }
+                                    ]}
+                                >
+                                    🎯
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureTitle,
+                                        {
+                                            color: theme.colors.text,
+                                            fontSize: theme.fontSizes.md,
+                                            fontWeight: theme.fontWeights.bold,
+                                            marginBottom: theme.spacing[1]
+                                        }
+                                    ]}
+                                >
+                                    Set Goals
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureDescription,
+                                        {
+                                            color: theme.colors.textSecondary,
+                                            fontSize: theme.fontSizes.sm,
+                                            lineHeight: theme.fontSizes.sm * 1.38
+                                        }
+                                    ]}
+                                >
                                     Define targets and stay motivated
                                 </Text>
-                            </View>
+                            </Card>
 
-                            <View style={styles.featureCard}>
-                                <Text style={styles.featureIcon}>📈</Text>
-                                <Text style={styles.featureTitle}>Analytics</Text>
-                                <Text style={styles.featureDescription}>
+                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                                <Text
+                                    style={[
+                                        styles.featureIcon,
+                                        { marginBottom: theme.spacing[3] }
+                                    ]}
+                                >
+                                    📈
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureTitle,
+                                        {
+                                            color: theme.colors.text,
+                                            fontSize: theme.fontSizes.md,
+                                            fontWeight: theme.fontWeights.bold,
+                                            marginBottom: theme.spacing[1]
+                                        }
+                                    ]}
+                                >
+                                    Analytics
+                                </Text>
+                                <Text
+                                    style={[
+                                        styles.featureDescription,
+                                        {
+                                            color: theme.colors.textSecondary,
+                                            fontSize: theme.fontSizes.sm,
+                                            lineHeight: theme.fontSizes.sm * 1.38
+                                        }
+                                    ]}
+                                >
                                     Deep insights into your fitness journey
                                 </Text>
-                            </View>
+                            </Card>
                         </View>
 
-                        <Text style={styles.footer}>Your data is secure and private</Text>
+                        <Text
+                            style={[
+                                styles.footer,
+                                {
+                                    color: theme.colors.textTertiary,
+                                    fontSize: theme.fontSizes.xs,
+                                    marginTop: theme.spacing[4]
+                                }
+                            ]}
+                        >
+                            Your data is secure and private
+                        </Text>
                     </View>
                 </ScrollView>
             </Unauthenticated>
@@ -83,88 +276,36 @@ export default function AuthPage() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff'
+        flex: 1
     },
-    content: {
-        paddingHorizontal: 20,
-        paddingVertical: 32
-    },
+    content: {},
     heroSection: {
-        alignItems: 'center',
-        marginBottom: 48,
-        paddingTop: 16
+        alignItems: 'center'
     },
     logo: {
-        fontSize: 60,
-        marginBottom: 16
+        fontSize: 60
     },
     title: {
-        fontSize: 36,
-        fontWeight: '800',
-        color: '#000',
-        marginBottom: 8,
         textAlign: 'center'
     },
     tagline: {
-        fontSize: 16,
-        color: '#666',
-        textAlign: 'center',
-        lineHeight: 22
+        textAlign: 'center'
     },
-    featuresSection: {
-        marginBottom: 40,
-        gap: 12
-    },
-    featureCard: {
-        backgroundColor: '#f8f8f8',
-        borderRadius: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 20,
-        marginBottom: 8
-    },
+    featuresSection: {},
     featureIcon: {
-        fontSize: 32,
-        marginBottom: 12
+        fontSize: 32
     },
-    featureTitle: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 4
-    },
-    featureDescription: {
-        fontSize: 13,
-        color: '#666',
-        lineHeight: 18
-    },
-    ctaSection: {
-        marginBottom: 32
-    },
+    featureTitle: {},
+    featureDescription: {},
+    ctaSection: {},
     ctaTitle: {
-        fontSize: 22,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 8,
         textAlign: 'center'
     },
     ctaDescription: {
-        fontSize: 14,
-        color: '#666',
-        textAlign: 'center',
-        marginBottom: 24,
-        lineHeight: 20
+        textAlign: 'center'
     },
-    signInContainer: {
-        marginBottom: 0
-    },
-    signInSpacer: {
-        height: 12
-    },
+    signInContainer: {},
     footer: {
-        fontSize: 12,
-        color: '#999',
-        textAlign: 'center',
-        marginTop: 16
+        textAlign: 'center'
     }
 })

@@ -2,14 +2,16 @@ import { useEffect, useMemo, useState } from 'react'
 import {
     ActivityIndicator,
     Alert,
+    Pressable,
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity,
     View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
+import { Button, Card, useTheme } from '@/ui'
+import { Theme } from '@/ui/theme/themes'
 import { useWorkoutSession, WorkoutSet } from '@/utils/useWorkoutSession'
 import { formatTime } from '@/utils/workoutUtils'
 import { Ionicons } from '@expo/vector-icons'
@@ -22,9 +24,10 @@ interface SetInputProps {
     set: WorkoutSet
     index: number
     onUpdate: (index: number, field: keyof WorkoutSet, value: number | boolean) => Promise<void>
+    theme: Theme
 }
 
-function SetInputRow({ set, index, onUpdate }: SetInputProps) {
+function SetInputRow({ set, index, onUpdate, theme }: SetInputProps) {
     const [localWeight, setLocalWeight] = useState(String(set.weight))
     const [localReps, setLocalReps] = useState(String(set.completedReps))
 
@@ -47,30 +50,80 @@ function SetInputRow({ set, index, onUpdate }: SetInputProps) {
     }
 
     return (
-        <View style={styles.setInputs}>
+        <View style={[styles.setInputs, { gap: theme.spacing[3] }]}>
             <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Weight</Text>
+                <Text
+                    style={[
+                        styles.inputLabel,
+                        {
+                            color: theme.colors.textSecondary,
+                            fontSize: theme.fontSizes.xs,
+                            fontWeight: theme.fontWeights.semibold,
+                            marginBottom: theme.spacing[1]
+                        }
+                    ]}
+                >
+                    Weight
+                </Text>
                 <TextInput
-                    style={styles.input}
+                    style={[
+                        styles.input,
+                        {
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                            borderRadius: theme.borderRadius.md,
+                            padding: theme.spacing[2],
+                            fontSize: theme.fontSizes.md,
+                            fontWeight: theme.fontWeights.semibold,
+                            color: theme.colors.text,
+                            backgroundColor: theme.colors.surfaceSecondary
+                        }
+                    ]}
                     value={localWeight}
                     onChangeText={setLocalWeight}
                     onBlur={handleWeightBlur}
                     onEndEditing={handleWeightBlur}
                     keyboardType="numeric"
                     placeholder="0"
+                    placeholderTextColor={theme.colors.textMuted}
                 />
             </View>
 
             <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>Reps</Text>
+                <Text
+                    style={[
+                        styles.inputLabel,
+                        {
+                            color: theme.colors.textSecondary,
+                            fontSize: theme.fontSizes.xs,
+                            fontWeight: theme.fontWeights.semibold,
+                            marginBottom: theme.spacing[1]
+                        }
+                    ]}
+                >
+                    Reps
+                </Text>
                 <TextInput
-                    style={styles.input}
+                    style={[
+                        styles.input,
+                        {
+                            borderWidth: 1,
+                            borderColor: theme.colors.border,
+                            borderRadius: theme.borderRadius.md,
+                            padding: theme.spacing[2],
+                            fontSize: theme.fontSizes.md,
+                            fontWeight: theme.fontWeights.semibold,
+                            color: theme.colors.text,
+                            backgroundColor: theme.colors.surfaceSecondary
+                        }
+                    ]}
                     value={localReps}
                     onChangeText={setLocalReps}
                     onBlur={handleRepsBlur}
                     onEndEditing={handleRepsBlur}
                     keyboardType="numeric"
                     placeholder={String(set.targetReps)}
+                    placeholderTextColor={theme.colors.textMuted}
                 />
             </View>
         </View>
@@ -78,6 +131,7 @@ function SetInputRow({ set, index, onUpdate }: SetInputProps) {
 }
 
 export default function ActiveWorkoutPage() {
+    const { theme } = useTheme()
     const {
         activeSession,
         sets,
@@ -211,52 +265,113 @@ export default function ActiveWorkoutPage() {
 
     if (!activeSession) {
         return (
-            <SafeAreaView style={styles.container}>
+            <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
                 <Stack.Screen options={{ title: 'Workout', headerShown: true }} />
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
                 </View>
             </SafeAreaView>
         )
     }
 
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']}>
+        <SafeAreaView
+            style={[styles.container, { backgroundColor: theme.colors.background }]}
+            edges={['bottom']}
+        >
             <Stack.Screen
                 options={{
                     title: 'Workout in Progress',
                     headerShown: true,
                     headerLeft: () => (
-                        <TouchableOpacity onPress={handleCancelWorkout} style={styles.headerButton}>
-                            <Text style={styles.headerButtonCancel}>Cancel</Text>
-                        </TouchableOpacity>
+                        <Pressable
+                            onPress={handleCancelWorkout}
+                            style={{ padding: theme.spacing[2] }}
+                        >
+                            <Text
+                                style={{
+                                    color: theme.colors.error,
+                                    fontSize: theme.fontSizes.md,
+                                    fontWeight: theme.fontWeights.semibold
+                                }}
+                            >
+                                Cancel
+                            </Text>
+                        </Pressable>
                     )
                 }}
             />
 
             {/* Stats Bar */}
-            <View style={styles.statsBar}>
-                <View style={styles.statItem}>
-                    <Ionicons name="time-outline" size={18} color="#666" />
-                    <Text style={styles.statValue}>{formatTime(elapsedTime)}</Text>
+            <View
+                style={[
+                    styles.statsBar,
+                    {
+                        backgroundColor: theme.colors.surface,
+                        paddingHorizontal: theme.spacing[4],
+                        paddingVertical: theme.spacing[3],
+                        borderBottomWidth: 1,
+                        borderBottomColor: theme.colors.border,
+                        gap: theme.spacing[4]
+                    }
+                ]}
+            >
+                <View style={[styles.statItem, { gap: theme.spacing[1] }]}>
+                    <Ionicons name="time-outline" size={18} color={theme.colors.textSecondary} />
+                    <Text
+                        style={[
+                            styles.statValue,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.sm,
+                                fontWeight: theme.fontWeights.semibold
+                            }
+                        ]}
+                    >
+                        {formatTime(elapsedTime)}
+                    </Text>
                 </View>
-                <View style={styles.statItem}>
-                    <Ionicons name="checkmark-circle-outline" size={18} color="#666" />
-                    <Text style={styles.statValue}>
+                <View style={[styles.statItem, { gap: theme.spacing[1] }]}>
+                    <Ionicons
+                        name="checkmark-circle-outline"
+                        size={18}
+                        color={theme.colors.textSecondary}
+                    />
+                    <Text
+                        style={[
+                            styles.statValue,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.sm,
+                                fontWeight: theme.fontWeights.semibold
+                            }
+                        ]}
+                    >
                         {stats.completedSets}/{stats.totalSets}
                     </Text>
                 </View>
-                <View style={styles.statItem}>
-                    <Ionicons name="barbell-outline" size={18} color="#666" />
-                    <Text style={styles.statValue}>{stats.totalWeight} kg</Text>
+                <View style={[styles.statItem, { gap: theme.spacing[1] }]}>
+                    <Ionicons name="barbell-outline" size={18} color={theme.colors.textSecondary} />
+                    <Text
+                        style={[
+                            styles.statValue,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.sm,
+                                fontWeight: theme.fontWeights.semibold
+                            }
+                        ]}
+                    >
+                        {stats.totalWeight} kg
+                    </Text>
                 </View>
                 <View style={styles.syncIndicator}>
                     {isSyncing ? (
-                        <ActivityIndicator size="small" color="#007AFF" />
+                        <ActivityIndicator size="small" color={theme.colors.primary} />
                     ) : syncError ? (
-                        <Ionicons name="cloud-offline" size={18} color="#FF3B30" />
+                        <Ionicons name="cloud-offline" size={18} color={theme.colors.error} />
                     ) : (
-                        <Ionicons name="cloud-done" size={18} color="#34C759" />
+                        <Ionicons name="cloud-done" size={18} color={theme.colors.success} />
                     )}
                 </View>
             </View>
@@ -269,60 +384,146 @@ export default function ActiveWorkoutPage() {
                     const isFirstSet = exerciseSets[0] === item
 
                     return (
-                        <View style={styles.setContainer}>
+                        <View style={[styles.setContainer, { marginBottom: theme.spacing[4] }]}>
                             {isFirstSet && (
-                                <View style={styles.exerciseHeader}>
-                                    <Text style={styles.exerciseName}>{exercise?.name}</Text>
-                                    <Text style={styles.exerciseMeta}>
+                                <View style={[styles.exerciseHeader, { marginBottom: theme.spacing[3] }]}>
+                                    <Text
+                                        style={[
+                                            styles.exerciseName,
+                                            {
+                                                color: theme.colors.text,
+                                                fontSize: theme.fontSizes.xl,
+                                                fontWeight: theme.fontWeights.bold,
+                                                marginBottom: theme.spacing[1]
+                                            }
+                                        ]}
+                                    >
+                                        {exercise?.name}
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            styles.exerciseMeta,
+                                            {
+                                                color: theme.colors.textSecondary,
+                                                fontSize: theme.fontSizes.sm
+                                            }
+                                        ]}
+                                    >
                                         {exerciseSets.length} sets × {item.targetReps} reps
                                     </Text>
                                 </View>
                             )}
 
-                            <View style={[styles.setRow, item.completed && styles.setRowCompleted]}>
-                                <View style={styles.setNumber}>
-                                    <Text style={styles.setNumberText}>{item.setNumber}</Text>
+                            <Card
+                                elevation="sm"
+                                padding="sm"
+                                style={{
+                                    marginBottom: theme.spacing[2],
+                                    backgroundColor: item.completed
+                                        ? theme.colors.success + '10'
+                                        : theme.colors.surface,
+                                    borderWidth: item.completed ? 1 : 0,
+                                    borderColor: item.completed
+                                        ? theme.colors.success
+                                        : 'transparent'
+                                }}
+                            >
+                                <View style={styles.setRow}>
+                                    <View
+                                        style={[
+                                            styles.setNumber,
+                                            {
+                                                width: 32,
+                                                height: 32,
+                                                borderRadius: 16,
+                                                backgroundColor: theme.colors.surfaceSecondary,
+                                                marginRight: theme.spacing[3]
+                                            }
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.setNumberText,
+                                                {
+                                                    color: theme.colors.textSecondary,
+                                                    fontSize: theme.fontSizes.sm,
+                                                    fontWeight: theme.fontWeights.bold
+                                                }
+                                            ]}
+                                        >
+                                            {item.setNumber}
+                                        </Text>
+                                    </View>
+
+                                    <SetInputRow set={item} index={index} onUpdate={handleUpdateSet} theme={theme} />
+
+                                    <TogglePrimitive.Root
+                                        style={({ pressed }) => [
+                                            styles.checkButton,
+                                            {
+                                                width: 40,
+                                                height: 40,
+                                                borderRadius: 20,
+                                                borderWidth: 2,
+                                                borderColor: item.completed
+                                                    ? theme.colors.success
+                                                    : theme.colors.primary,
+                                                backgroundColor: item.completed
+                                                    ? theme.colors.success
+                                                    : 'transparent',
+                                                marginLeft: theme.spacing[3]
+                                            },
+                                            pressed && { opacity: 0.7 }
+                                        ]}
+                                        pressed={item.completed}
+                                        onPressedChange={() =>
+                                            handleUpdateSet(index, 'completed', !item.completed)
+                                        }
+                                    >
+                                        <Ionicons
+                                            name={item.completed ? 'checkmark' : 'checkmark-outline'}
+                                            size={24}
+                                            color={
+                                                item.completed
+                                                    ? theme.colors.successForeground
+                                                    : theme.colors.primary
+                                            }
+                                        />
+                                    </TogglePrimitive.Root>
                                 </View>
-
-                                <SetInputRow set={item} index={index} onUpdate={handleUpdateSet} />
-
-                                <TogglePrimitive.Root
-                                    style={({ pressed }) => [
-                                        styles.checkButton,
-                                        item.completed && styles.checkButtonCompleted,
-                                        pressed && { opacity: 0.7 }
-                                    ]}
-                                    pressed={item.completed}
-                                    onPressedChange={() =>
-                                        handleUpdateSet(index, 'completed', !item.completed)
-                                    }
-                                >
-                                    <Ionicons
-                                        name={item.completed ? 'checkmark' : 'checkmark-outline'}
-                                        size={24}
-                                        color={item.completed ? '#fff' : '#007AFF'}
-                                    />
-                                </TogglePrimitive.Root>
-                            </View>
+                            </Card>
                         </View>
                     )
                 }}
                 keyExtractor={(item, index) => `${item.exerciseId}-${index}`}
-                contentContainerStyle={styles.listContent}
+                contentContainerStyle={[
+                    styles.listContent,
+                    {
+                        paddingHorizontal: theme.spacing[5],
+                        paddingVertical: theme.spacing[4]
+                    }
+                ]}
             />
 
-            <View style={styles.footer}>
-                <TouchableOpacity
-                    style={[styles.completeButton, isCompleting && styles.buttonDisabled]}
+            <View
+                style={[
+                    styles.footer,
+                    {
+                        padding: theme.spacing[5],
+                        backgroundColor: theme.colors.surface,
+                        borderTopWidth: 1,
+                        borderTopColor: theme.colors.border
+                    }
+                ]}
+            >
+                <Button
+                    title="Complete Workout"
                     onPress={handleCompleteWorkout}
                     disabled={isCompleting}
-                >
-                    {isCompleting ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                        <Text style={styles.completeButtonText}>Complete Workout</Text>
-                    )}
-                </TouchableOpacity>
+                    loading={isCompleting}
+                    fullWidth
+                    style={{ backgroundColor: theme.colors.success }}
+                />
             </View>
         </SafeAreaView>
     )
@@ -330,155 +531,53 @@ export default function ActiveWorkoutPage() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9'
+        flex: 1
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
     },
-    headerButton: {
-        padding: 8
-    },
-    headerButtonCancel: {
-        color: '#FF3B30',
-        fontSize: 16,
-        fontWeight: '600'
-    },
     statsBar: {
         flexDirection: 'row',
-        backgroundColor: '#fff',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
-        gap: 16,
         alignItems: 'center'
     },
     statItem: {
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 4
+        alignItems: 'center'
     },
-    statValue: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#333'
-    },
+    statValue: {},
     syncIndicator: {
         marginLeft: 'auto'
     },
-    listContent: {
-        paddingHorizontal: 20,
-        paddingVertical: 16
-    },
-    setContainer: {
-        marginBottom: 16
-    },
-    exerciseHeader: {
-        marginBottom: 12
-    },
-    exerciseName: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 4
-    },
-    exerciseMeta: {
-        fontSize: 14,
-        color: '#666'
-    },
+    listContent: {},
+    setContainer: {},
+    exerciseHeader: {},
+    exerciseName: {},
+    exerciseMeta: {},
     setRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 12,
-        marginBottom: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2
-    },
-    setRowCompleted: {
-        backgroundColor: '#f0fff4',
-        borderWidth: 1,
-        borderColor: '#34C759'
+        alignItems: 'center'
     },
     setNumber: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#f0f0f0',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12
+        justifyContent: 'center'
     },
-    setNumberText: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#666'
-    },
+    setNumberText: {},
     setInputs: {
         flex: 1,
-        flexDirection: 'row',
-        gap: 12
+        flexDirection: 'row'
     },
     inputGroup: {
         flex: 1
     },
-    inputLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#666',
-        marginBottom: 4
-    },
+    inputLabel: {},
     input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 8,
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        backgroundColor: '#f5f5f5',
         textAlign: 'center'
     },
     checkButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        borderWidth: 2,
-        borderColor: '#007AFF',
         alignItems: 'center',
-        justifyContent: 'center',
-        marginLeft: 12
+        justifyContent: 'center'
     },
-    checkButtonCompleted: {
-        backgroundColor: '#4CAF50',
-        borderColor: '#4CAF50'
-    },
-    footer: {
-        padding: 20,
-        backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#f0f0f0'
-    },
-    completeButton: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-        minHeight: 52
-    },
-    completeButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '700'
-    },
-    buttonDisabled: {
-        opacity: 0.6
-    }
+    footer: {}
 })
