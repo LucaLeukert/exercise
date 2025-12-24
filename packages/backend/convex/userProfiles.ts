@@ -40,10 +40,18 @@ export const upsert = mutation({
       throw new Error("Unauthorized");
     }
 
+    // Derive userId from authenticated identity
+    const userId = identity.subject;
+
+    // Validate that args.userId matches authenticated user (if provided)
+    if (args.userId !== userId) {
+      throw new Error("Unauthorized: cannot modify another user's profile");
+    }
+
     // Enforce uniqueness: check if profile already exists
     const existing = await ctx.db
       .query("userProfiles")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first();
 
     const now = Date.now();
@@ -63,7 +71,7 @@ export const upsert = mutation({
     } else {
       // Create new profile
       const profileId = await ctx.db.insert("userProfiles", {
-        userId: args.userId,
+        userId: userId,
         username: args.username,
         bio: args.bio,
         profileImageUrl: args.profileImageUrl,
@@ -81,7 +89,6 @@ export const upsert = mutation({
 // Create user profile (with uniqueness check)
 export const create = mutation({
   args: {
-    userId: v.string(),
     username: v.optional(v.string()),
     bio: v.optional(v.string()),
     profileImageUrl: v.optional(v.string()),
@@ -102,21 +109,24 @@ export const create = mutation({
       throw new Error("Unauthorized");
     }
 
+    // Derive userId from authenticated identity (ignore any userId in args)
+    const userId = identity.subject;
+
     // Enforce uniqueness: check if profile already exists
     const existing = await ctx.db
       .query("userProfiles")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first();
 
     if (existing) {
       throw new Error(
-        `User profile already exists for userId: ${args.userId}`
+        `User profile already exists for userId: ${userId}`
       );
     }
 
     const now = Date.now();
     const profileId = await ctx.db.insert("userProfiles", {
-      userId: args.userId,
+      userId: userId,
       username: args.username,
       bio: args.bio,
       profileImageUrl: args.profileImageUrl,
@@ -134,7 +144,6 @@ export const create = mutation({
 // Update user profile (with uniqueness check)
 export const update = mutation({
   args: {
-    userId: v.string(),
     username: v.optional(v.string()),
     bio: v.optional(v.string()),
     profileImageUrl: v.optional(v.string()),
@@ -151,18 +160,21 @@ export const update = mutation({
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
+    if (!identity || !identity.subject) {
       throw new Error("Unauthorized");
     }
+
+    // Derive userId from authenticated identity (ignore any userId in args)
+    const userId = identity.subject;
 
     // Find existing profile
     const existing = await ctx.db
       .query("userProfiles")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .withIndex("by_userId", (q) => q.eq("userId", userId))
       .first();
 
     if (!existing) {
-      throw new Error(`User profile not found for userId: ${args.userId}`);
+      throw new Error(`User profile not found for userId: ${userId}`);
     }
 
     const now = Date.now();

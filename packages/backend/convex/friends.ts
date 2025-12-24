@@ -3,16 +3,34 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { friendStatusEnum } from "./schema";
 
-// Get friends for a user
+// Get friends for a user (both as requester and recipient)
 export const getByUserId = query({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
-    const friends = await ctx.db
+    // Query friendships where user is the requester
+    const asRequester = await ctx.db
       .query("friends")
       .withIndex("by_requesterId", (q) => q.eq("requesterId", args.userId))
       .collect();
 
-    return friends;
+    // Query friendships where user is the recipient
+    const asRecipient = await ctx.db
+      .query("friends")
+      .withIndex("by_recipientId", (q) => q.eq("recipientId", args.userId))
+      .collect();
+
+    // Combine and deduplicate by _id
+    const friendMap = new Map<string, typeof asRequester[0]>();
+    
+    for (const friend of asRequester) {
+      friendMap.set(friend._id, friend);
+    }
+    
+    for (const friend of asRecipient) {
+      friendMap.set(friend._id, friend);
+    }
+
+    return Array.from(friendMap.values());
   },
 });
 
@@ -171,11 +189,19 @@ export const block = mutation({
       throw new Error("Cannot block yourself");
     }
 
-    // Check if relationship exists
+    // Check if relationship exists (caller as requester)
     const existing = await ctx.db
       .query("friends")
       .withIndex("by_requesterId_recipientId", (q) =>
         q.eq("requesterId", requesterId).eq("recipientId", args.userId)
+      )
+      .first();
+
+    // Check reverse direction (caller as recipient)
+    const reverse = await ctx.db
+      .query("friends")
+      .withIndex("by_requesterId_recipientId", (q) =>
+        q.eq("requesterId", args.userId).eq("recipientId", requesterId)
       )
       .first();
 
@@ -188,6 +214,13 @@ export const block = mutation({
         updatedAt: now,
       });
       return await ctx.db.get(existing._id);
+    } else if (reverse) {
+      // Update reverse relationship to blocked
+      await ctx.db.patch(reverse._id, {
+        status: "blocked",
+        updatedAt: now,
+      });
+      return await ctx.db.get(reverse._id);
     } else {
       // Create new blocked relationship
       const friendId = await ctx.db.insert("friends", {

@@ -42,6 +42,7 @@ export function Progress({
 }: ProgressProps) {
     const { theme } = useTheme()
     const animatedValue = useRef(new Animated.Value(0)).current
+    const containerWidth = useRef<number | null>(null)
 
     const heightValues: Record<ProgressSize, number> = {
         sm: 4,
@@ -53,7 +54,7 @@ export function Progress({
     const percentage = Math.min(100, Math.max(0, (value / max) * 100))
 
     useEffect(() => {
-        if (indeterminate) {
+        if (indeterminate && containerWidth.current !== null) {
             // Create a looping animation that translates the progress bar
             const animation = Animated.loop(
                 Animated.sequence([
@@ -76,15 +77,24 @@ export function Progress({
         }
     }, [indeterminate, animatedValue])
 
-    const translateX = indeterminate
-        ? animatedValue.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['-100%', '200%']
-          })
-        : 0
+    const handleLayout = (event: { nativeEvent: { layout: { width: number } } }) => {
+        const { width } = event.nativeEvent.layout
+        if (width > 0) {
+            containerWidth.current = width
+        }
+    }
+
+    const translateX =
+        indeterminate && containerWidth.current !== null
+            ? animatedValue.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-containerWidth.current, containerWidth.current * 2]
+              })
+            : 0
 
     return (
         <View
+            onLayout={handleLayout}
             style={[
                 styles.container,
                 {
