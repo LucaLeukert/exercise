@@ -5,6 +5,8 @@ import { ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
 import { err, ok, Result } from 'neverthrow'
 
+import { ThemeProvider } from '../ui/theme'
+
 function getConvexUrl(): Result<string, Error> {
     const url = process.env.EXPO_PUBLIC_CONVEX_URL
     if (!url) {
@@ -29,7 +31,9 @@ export default function RootLayout() {
         >
             {/* eslint-disable-next-line react-compiler/react-compiler */}
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-                <Slot />
+                <ThemeProvider>
+                    <Slot />
+                </ThemeProvider>
             </ConvexProviderWithClerk>
         </ClerkProvider>
     )
