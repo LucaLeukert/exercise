@@ -1,16 +1,10 @@
 import { useMemo, useState } from 'react'
-import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { BackButton } from '@/components/BackButton'
 import { ExerciseCard } from '@/components/ExerciseCard'
 import { ExerciseFiltersModal } from '@/components/ExerciseFilters'
 import { Badge, useTheme } from '@/ui'
+import { Theme } from '@/ui/theme/themes'
 import { applyLocalFilters, searchLocalExercises } from '@/utils/exerciseSearch'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import {
@@ -24,8 +18,6 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import { ExerciseFiltersType } from '@packages/backend/convex/schema'
 import { useDebounce } from 'use-debounce'
-
-import { Theme } from '@/ui/theme/themes'
 
 const HeaderComponent: React.FC<ScrollHeaderProps & { total: number; theme: Theme }> = ({
     showNavBar,
@@ -107,7 +99,12 @@ const LargeHeaderComponent: React.FC<
                         {total ? `${total} total` : '0 exercises'}
                     </Text>
                 </View>
-                <View style={[styles.searchRow, { gap: theme.spacing[3], marginTop: theme.spacing[3] }]}>
+                <View
+                    style={[
+                        styles.searchRow,
+                        { gap: theme.spacing[3], marginTop: theme.spacing[3] }
+                    ]}
+                >
                     <View
                         style={[
                             styles.searchContainer,
@@ -147,7 +144,11 @@ const LargeHeaderComponent: React.FC<
                                 onPress={() => onSearchChange('')}
                                 style={{ padding: theme.spacing[1] }}
                             >
-                                <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+                                <Ionicons
+                                    name="close-circle"
+                                    size={18}
+                                    color={theme.colors.textTertiary}
+                                />
                             </Pressable>
                         )}
                     </View>

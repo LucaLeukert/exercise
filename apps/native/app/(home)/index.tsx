@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
     ActivityIndicator,
     Pressable,
@@ -9,7 +10,18 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
 import { SignOutButton } from '@/components/auth/SignOut'
-import { Button, Card, Badge, useTheme } from '@/ui'
+import {
+    Badge,
+    Button,
+    Card,
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    useTheme
+} from '@/ui'
 import { api } from '@/utils/convex'
 import { wrapConvexMutation } from '@/utils/result'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
@@ -21,7 +33,8 @@ import { useMutation, useQuery } from 'convex/react'
 
 export default function HomePage() {
     const { user } = useUser()
-    const { theme } = useTheme()
+    const { theme, themeName, setTheme, availableThemes, isDark } = useTheme()
+    const [showThemePicker, setShowThemePicker] = useState(false)
 
     const routines = useQuery(api.routines.list, {})
     const isLoading = routines === undefined
@@ -91,14 +104,12 @@ export default function HomePage() {
                     </Text>
                 </View>
                 <View style={[styles.headerButtons, { gap: theme.spacing[3] }]}>
-                    <TouchableOpacity onPress={() => router.push('/(home)/friends')}>
-                        <Ionicons name="people" size={24} color={theme.colors.primary} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => router.push('/(home)/profile')}
-                        style={{ marginRight: theme.spacing[2] }}
-                    >
-                        <Ionicons name="person-circle" size={28} color={theme.colors.primary} />
+                    <TouchableOpacity onPress={() => setShowThemePicker(true)}>
+                        <Ionicons
+                            name={isDark ? 'moon' : 'sunny'}
+                            size={24}
+                            color={theme.colors.primary}
+                        />
                     </TouchableOpacity>
                     <SignOutButton />
                 </View>
@@ -173,7 +184,11 @@ export default function HomePage() {
                         >
                             {formatDuration(Date.now() - activeSession.startedAt)}
                         </Text>
-                        <Ionicons name="chevron-forward" size={20} color={theme.colors.primaryForeground} />
+                        <Ionicons
+                            name="chevron-forward"
+                            size={20}
+                            color={theme.colors.primaryForeground}
+                        />
                     </View>
                 </Pressable>
             )}
@@ -435,7 +450,9 @@ export default function HomePage() {
                                 <Button
                                     title="Start Workout"
                                     onPress={() => router.push(`/(home)/workout/${item._id}`)}
-                                    leftIcon={<Ionicons name="play-circle" size={20} color="#fff" />}
+                                    leftIcon={
+                                        <Ionicons name="play-circle" size={20} color="#fff" />
+                                    }
                                     fullWidth
                                 />
                             </Card>
@@ -448,6 +465,83 @@ export default function HomePage() {
                     />
                 )}
             </View>
+
+            {/* Theme Picker Dialog */}
+            <Dialog open={showThemePicker} onOpenChange={setShowThemePicker}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Choose Theme</DialogTitle>
+                    </DialogHeader>
+                    <View style={{ gap: theme.spacing[2], marginVertical: theme.spacing[4] }}>
+                        {availableThemes.map((themeOption) => (
+                            <Pressable
+                                key={themeOption}
+                                onPress={() => {
+                                    setTheme(themeOption)
+                                    setShowThemePicker(false)
+                                }}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    padding: theme.spacing[3],
+                                    borderRadius: theme.borderRadius.md,
+                                    backgroundColor:
+                                        themeName === themeOption
+                                            ? theme.colors.primary + '20'
+                                            : theme.colors.surfaceSecondary
+                                }}
+                            >
+                                <View
+                                    style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing[3] }}
+                                >
+                                    <Ionicons
+                                        name={
+                                            themeOption === 'dark'
+                                                ? 'moon'
+                                                : themeOption === 'light'
+                                                  ? 'sunny'
+                                                  : 'sparkles'
+                                        }
+                                        size={20}
+                                        color={
+                                            themeName === themeOption
+                                                ? theme.colors.primary
+                                                : theme.colors.textSecondary
+                                        }
+                                    />
+                                    <Text
+                                        style={{
+                                            color:
+                                                themeName === themeOption
+                                                    ? theme.colors.primary
+                                                    : theme.colors.text,
+                                            fontSize: theme.fontSizes.md,
+                                            fontWeight:
+                                                themeName === themeOption
+                                                    ? theme.fontWeights.semibold
+                                                    : theme.fontWeights.normal,
+                                            textTransform: 'capitalize'
+                                        }}
+                                    >
+                                        {themeOption}
+                                    </Text>
+                                </View>
+                                {themeName === themeOption && (
+                                    <Ionicons
+                                        name="checkmark-circle"
+                                        size={24}
+                                        color={theme.colors.primary}
+                                    />
+                                )}
+                            </Pressable>
+                        ))}
+                    </View>
+                    <DialogFooter>
+                        <DialogClose variant="ghost" title="Close" />
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </SafeAreaView>
     )
 }

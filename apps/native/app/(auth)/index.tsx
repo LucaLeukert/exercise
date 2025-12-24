@@ -107,12 +107,13 @@ export default function AuthPage() {
                                 { marginBottom: theme.spacing[10], gap: theme.spacing[3] }
                             ]}
                         >
-                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                            <Card
+                                elevation="none"
+                                padding="md"
+                                style={{ backgroundColor: theme.colors.surfaceSecondary }}
+                            >
                                 <Text
-                                    style={[
-                                        styles.featureIcon,
-                                        { marginBottom: theme.spacing[3] }
-                                    ]}
+                                    style={[styles.featureIcon, { marginBottom: theme.spacing[3] }]}
                                 >
                                     💪
                                 </Text>
@@ -143,12 +144,13 @@ export default function AuthPage() {
                                 </Text>
                             </Card>
 
-                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                            <Card
+                                elevation="none"
+                                padding="md"
+                                style={{ backgroundColor: theme.colors.surfaceSecondary }}
+                            >
                                 <Text
-                                    style={[
-                                        styles.featureIcon,
-                                        { marginBottom: theme.spacing[3] }
-                                    ]}
+                                    style={[styles.featureIcon, { marginBottom: theme.spacing[3] }]}
                                 >
                                     📊
                                 </Text>
@@ -179,12 +181,13 @@ export default function AuthPage() {
                                 </Text>
                             </Card>
 
-                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                            <Card
+                                elevation="none"
+                                padding="md"
+                                style={{ backgroundColor: theme.colors.surfaceSecondary }}
+                            >
                                 <Text
-                                    style={[
-                                        styles.featureIcon,
-                                        { marginBottom: theme.spacing[3] }
-                                    ]}
+                                    style={[styles.featureIcon, { marginBottom: theme.spacing[3] }]}
                                 >
                                     🎯
                                 </Text>
@@ -215,12 +218,13 @@ export default function AuthPage() {
                                 </Text>
                             </Card>
 
-                            <Card elevation="none" padding="md" style={{ backgroundColor: theme.colors.surfaceSecondary }}>
+                            <Card
+                                elevation="none"
+                                padding="md"
+                                style={{ backgroundColor: theme.colors.surfaceSecondary }}
+                            >
                                 <Text
-                                    style={[
-                                        styles.featureIcon,
-                                        { marginBottom: theme.spacing[3] }
-                                    ]}
+                                    style={[styles.featureIcon, { marginBottom: theme.spacing[3] }]}
                                 >
                                     📈
                                 </Text>

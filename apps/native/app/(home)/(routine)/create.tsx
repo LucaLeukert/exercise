@@ -256,9 +256,7 @@ export default function CreateRoutinePage() {
                         marginTop: theme.spacing[4]
                     }}
                 >
-                    <View
-                        style={[styles.sectionHeader, { marginBottom: theme.spacing[4] }]}
-                    >
+                    <View style={[styles.sectionHeader, { marginBottom: theme.spacing[4] }]}>
                         <Text
                             style={[
                                 styles.sectionTitle,
@@ -395,7 +393,9 @@ export default function CreateRoutinePage() {
                                         </Pressable>
                                     </View>
 
-                                    <View style={[styles.exerciseInputs, { gap: theme.spacing[3] }]}>
+                                    <View
+                                        style={[styles.exerciseInputs, { gap: theme.spacing[3] }]}
+                                    >
                                         <View style={styles.inputGroup}>
                                             <Text
                                                 style={[

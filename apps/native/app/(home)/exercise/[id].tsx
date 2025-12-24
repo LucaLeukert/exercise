@@ -52,7 +52,12 @@ const Pagination = ({
                                 }
                             ]}
                         >
-                            <View style={[styles.paginationDot, { backgroundColor: theme.colors.primary }]} />
+                            <View
+                                style={[
+                                    styles.paginationDot,
+                                    { backgroundColor: theme.colors.primary }
+                                ]}
+                            />
                         </Animated.View>
                     )
                 })}
@@ -145,7 +150,13 @@ export default function ExerciseDetailPage() {
                     headerShown: true
                 }}
             />
-            <ScrollView style={styles.scrollView} contentContainerStyle={[styles.contentContainer, { paddingBottom: theme.spacing[8] }]}>
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.contentContainer,
+                    { paddingBottom: theme.spacing[8] }
+                ]}
+            >
                 {/* Header Section */}
                 <View
                     style={[
@@ -221,7 +232,9 @@ export default function ExerciseDetailPage() {
                                 </View>
                             ))}
                         </AnimatedPagerView>
-                        <View style={[styles.paginationOverlay, { paddingBottom: theme.spacing[5] }]}>
+                        <View
+                            style={[styles.paginationOverlay, { paddingBottom: theme.spacing[5] }]}
+                        >
                             <Pagination
                                 scrollOffsetAnimatedValue={scrollOffsetAnimatedValue}
                                 positionAnimatedValue={positionAnimatedValue}

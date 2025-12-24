@@ -1,12 +1,5 @@
 import { useMemo, useState } from 'react'
-import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { ExerciseFiltersModal } from '@/components/ExerciseFilters'
@@ -223,7 +216,10 @@ export default function SelectExercisePage() {
                     returnKeyType="search"
                 />
                 {searchQuery.length > 0 && (
-                    <Pressable onPress={() => setSearchQuery('')} style={{ padding: theme.spacing[1] }}>
+                    <Pressable
+                        onPress={() => setSearchQuery('')}
+                        style={{ padding: theme.spacing[1] }}
+                    >
                         <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
                     </Pressable>
                 )}
@@ -301,14 +297,21 @@ export default function SelectExercisePage() {
                                     <Pressable
                                         style={[
                                             styles.infoButton,
-                                            { marginRight: theme.spacing[3], padding: theme.spacing[1] }
+                                            {
+                                                marginRight: theme.spacing[3],
+                                                padding: theme.spacing[1]
+                                            }
                                         ]}
                                         onPress={() => {
                                             router.push(`/exercise/${item.externalId}`)
                                         }}
                                         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                                     >
-                                        <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
+                                        <Ionicons
+                                            name="chevron-forward"
+                                            size={20}
+                                            color={theme.colors.primary}
+                                        />
                                     </Pressable>
                                 </View>
                             </Card>
