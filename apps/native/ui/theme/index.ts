@@ -22,7 +22,7 @@ export type { ShadowStyle, ShadowKey } from './shadows'
 export { themes, getTheme, registerTheme, getThemeNames, hasTheme } from './themes'
 export type { Theme, ThemeName } from './themes'
 
-// Theme provider and context
-export { ThemeProvider, ThemeContext } from './ThemeProvider'
-export type { ThemeContextValue, ThemeProviderProps } from './ThemeProvider'
+// Theme provider
+export { ThemeProvider } from './ThemeProvider'
+export type { ThemeProviderProps } from './ThemeProvider'
 

@@ -1,8 +1,30 @@
-import { useContext } from 'react'
 import { StyleSheet, ViewStyle, TextStyle, ImageStyle } from 'react-native'
 
-import { ThemeContext, ThemeContextValue } from '../theme/ThemeProvider'
+import { useThemeStore } from '@/store/store'
 import { Theme } from '../theme/themes'
+
+export interface ThemeContextValue {
+    /** Current theme object with all tokens */
+    theme: Theme
+    /** Current theme name */
+    themeName: string
+    /** Set theme by name */
+    setTheme: (name: string) => Promise<void>
+    /** Toggle between light and dark themes */
+    toggleTheme: () => Promise<void>
+    /** Register a custom theme */
+    registerCustomTheme: (name: string, theme: Partial<Theme> & { colors: Theme['colors'] }) => void
+    /** List of all available theme names */
+    availableThemes: string[]
+    /** Whether the current theme is dark */
+    isDark: boolean
+    /** System color scheme preference */
+    systemColorScheme: 'light' | 'dark' | null
+    /** Whether to follow system color scheme */
+    followSystem: boolean
+    /** Set whether to follow system color scheme */
+    setFollowSystem: (follow: boolean) => Promise<void>
+}
 
 /**
  * Hook to access the current theme and theme utilities
@@ -22,13 +44,31 @@ import { Theme } from '../theme/themes'
  * ```
  */
 export function useTheme(): ThemeContextValue {
-    const context = useContext(ThemeContext)
+    const {
+        theme,
+        themeName,
+        setTheme,
+        toggleTheme,
+        registerCustomTheme,
+        availableThemes,
+        isDark,
+        systemColorScheme,
+        followSystem,
+        setFollowSystem
+    } = useThemeStore()
 
-    if (!context) {
-        throw new Error('useTheme must be used within a ThemeProvider')
+    return {
+        theme,
+        themeName,
+        setTheme,
+        toggleTheme,
+        registerCustomTheme,
+        availableThemes,
+        isDark,
+        systemColorScheme,
+        followSystem,
+        setFollowSystem
     }
-
-    return context
 }
 
 /**
@@ -117,4 +157,3 @@ export function useThemeShadow(level: keyof Theme['shadows']): ViewStyle {
     const { theme } = useTheme()
     return theme.shadows[level]
 }
-

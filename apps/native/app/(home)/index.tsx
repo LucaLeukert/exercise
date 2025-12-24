@@ -477,6 +477,7 @@ export default function HomePage() {
                             <Pressable
                                 key={themeOption}
                                 onPress={() => {
+                                    console.log('setting theme to', themeOption)
                                     setTheme(themeOption)
                                     setShowThemePicker(false)
                                 }}
@@ -493,7 +494,11 @@ export default function HomePage() {
                                 }}
                             >
                                 <View
-                                    style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing[3] }}
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        gap: theme.spacing[3]
+                                    }}
                                 >
                                     <Ionicons
                                         name={
