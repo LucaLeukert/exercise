@@ -5,12 +5,12 @@
     "scripts": {
         "validate-env": "tsx scripts/validate-env.ts",
         "prebuild": "pnpm validate-env && expo prebuild",
-        "ios": "expo run:ios",
+        "ios": "expo run:ios --device 00008030-0004301A2620C02E",
         "start": "expo start",
         "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
         "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
         "web": "expo start --web",
-        "dev": "expo run:ios --device 00008030-0004301A2620C02E"
+        "dev": "expo start"
     },
     "dependencies": {
         "@clerk/clerk-expo": "^2.19.9",
