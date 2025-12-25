@@ -1,25 +1,29 @@
 {
-  "name": "@packages/backend",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "validate-env": "tsx scripts/validate-env.ts",
-    "dev": "pnpm validate-env && convex dev",
-    "setup": "pnpm validate-env && convex dev --until-success",
-    "typecheck": "tsc --noEmit -p convex",
-    "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --ignore-path ../../.gitignore"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "convex": "^1.29.3",
-    "openai": "^6.9.1"
-  },
-  "devDependencies": {
-    "@t3-oss/env-core": "^0.13.10",
-    "@types/node": "^22.19.1",
-    "tsx": "^4.21.0",
-    "typescript": "5.9.3",
-    "zod": "^4.2.1"
-  }
+    "name": "@packages/backend",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "validate-env": "tsx scripts/validate-env.ts",
+        "dev": "pnpm validate-env && convex dev",
+        "setup": "pnpm validate-env && convex dev --until-success",
+        "typecheck": "tsc --noEmit -p convex",
+        "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --ignore-path ../../.gitignore",
+        "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\""
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "convex": "^1.29.3",
+        "openai": "^6.9.1"
+    },
+    "devDependencies": {
+        "@tools/eslint-config": "workspace:*",
+        "@tools/prettier-config": "workspace:*",
+        "@t3-oss/env-core": "^0.13.10",
+        "@types/node": "^22.19.1",
+        "tsx": "^4.21.0",
+        "typescript": "5.9.3",
+        "zod": "^4.2.1"
+    },
+    "prettier": "@tools/prettier-config"
 }

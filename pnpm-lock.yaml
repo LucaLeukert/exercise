@@ -274,6 +274,12 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.13.10
         version: 0.13.10(typescript@5.9.3)(zod@4.2.1)
+      '@tools/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint
+      '@tools/prettier-config':
+        specifier: workspace:*
+        version: link:../../tools/prettier
       '@types/node':
         specifier: ^22.19.1
         version: 22.19.1

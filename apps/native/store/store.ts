@@ -203,17 +203,14 @@ export const useThemeStore = create<ThemeState>((set, get) => {
             set({ availableThemes: getThemeNames() })
         },
 
-        initializeTheme: async (
-            defaultTheme?: string,
-            defaultFollowSystem?: boolean
-        ) => {
+        initializeTheme: async (defaultTheme?: string, defaultFollowSystem?: boolean) => {
             try {
                 const stored = await AsyncStorage.getItem(THEME_STORAGE_KEY)
-                let themeName: ThemeName = defaultTheme && hasTheme(defaultTheme as ThemeName)
-                    ? (defaultTheme as ThemeName)
-                    : defaultThemeName
-                let followSystem =
-                    defaultFollowSystem !== undefined ? defaultFollowSystem : true
+                let themeName: ThemeName =
+                    defaultTheme && hasTheme(defaultTheme as ThemeName)
+                        ? (defaultTheme as ThemeName)
+                        : defaultThemeName
+                let followSystem = defaultFollowSystem !== undefined ? defaultFollowSystem : true
 
                 if (stored) {
                     const parsed = JSON.parse(stored)

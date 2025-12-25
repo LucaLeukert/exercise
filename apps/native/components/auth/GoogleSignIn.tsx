@@ -65,7 +65,7 @@ export default function GoogleSignIn() {
             } else {
                 // Use signIn or signUp for next steps such as MFA
                 console.log('Additional steps required:', { signIn, signUp })
-                
+
                 // Show user-facing alert explaining next steps
                 Alert.alert(
                     'Additional Steps Required',

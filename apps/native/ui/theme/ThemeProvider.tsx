@@ -31,7 +31,6 @@ export function ThemeProvider({
         updateSystemColorScheme(systemColorScheme ?? null)
     }, [systemColorScheme, updateSystemColorScheme])
 
-
     // Don't render until theme is loaded to prevent flash
     if (!isLoaded) {
         return null
