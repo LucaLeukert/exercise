@@ -1,15 +1,10 @@
 import { useMemo, useState } from 'react'
-import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { BackButton } from '@/components/BackButton'
 import { ExerciseCard } from '@/components/ExerciseCard'
 import { ExerciseFiltersModal } from '@/components/ExerciseFilters'
+import { Badge, useTheme } from '@/ui'
+import { Theme } from '@/ui/theme/themes'
 import { applyLocalFilters, searchLocalExercises } from '@/utils/exerciseSearch'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import {
@@ -24,21 +19,41 @@ import { Ionicons } from '@expo/vector-icons'
 import { ExerciseFiltersType } from '@packages/backend/convex/schema'
 import { useDebounce } from 'use-debounce'
 
-const HeaderComponent: React.FC<ScrollHeaderProps & { total: number }> = ({
+const HeaderComponent: React.FC<ScrollHeaderProps & { total: number; theme: Theme }> = ({
     showNavBar,
-    total
+    total,
+    theme
 }) => (
     <Header
         showNavBar={showNavBar}
         headerCenter={
-            <Text style={styles.title} numberOfLines={1}>
+            <Text
+                style={[
+                    styles.title,
+                    {
+                        color: theme.colors.text,
+                        fontSize: theme.fontSizes.xl,
+                        fontWeight: theme.fontWeights.bold
+                    }
+                ]}
+                numberOfLines={1}
+            >
                 All Exercises
             </Text>
         }
         headerRight={
-            <>
-                <Text style={styles.count}>{total ? `${total} total` : '0 exercises'}</Text>
-            </>
+            <Text
+                style={[
+                    styles.count,
+                    {
+                        color: theme.colors.textSecondary,
+                        fontSize: theme.fontSizes.sm,
+                        fontWeight: theme.fontWeights.medium
+                    }
+                ]}
+            >
+                {total ? `${total} total` : '0 exercises'}
+            </Text>
         }
         headerRightFadesIn
         headerLeft={<BackButton />}
@@ -52,48 +67,128 @@ const LargeHeaderComponent: React.FC<
         setShowFilters: (show: boolean) => void
         searchQuery: string
         onSearchChange: (query: string) => void
+        theme: Theme
     }
-> = ({ scrollY, total, activeFilterCount, setShowFilters, searchQuery, onSearchChange }) => {
+> = ({ scrollY, total, activeFilterCount, setShowFilters, searchQuery, onSearchChange, theme }) => {
     return (
         <LargeHeader>
             <ScalingView scrollY={scrollY}>
                 <View style={styles.headerTop}>
-                    <Text style={styles.title}>All Exercises</Text>
-                    <Text style={styles.count}>{total ? `${total} total` : '0 exercises'}</Text>
+                    <Text
+                        style={[
+                            styles.title,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.bold
+                            }
+                        ]}
+                    >
+                        All Exercises
+                    </Text>
+                    <Text
+                        style={[
+                            styles.count,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.sm,
+                                fontWeight: theme.fontWeights.medium
+                            }
+                        ]}
+                    >
+                        {total ? `${total} total` : '0 exercises'}
+                    </Text>
                 </View>
-                <View style={styles.searchRow}>
-                    <View style={styles.searchContainer}>
-                        <Ionicons name="search" size={18} color="#999" style={styles.searchIcon} />
+                <View
+                    style={[
+                        styles.searchRow,
+                        { gap: theme.spacing[3], marginTop: theme.spacing[3] }
+                    ]}
+                >
+                    <View
+                        style={[
+                            styles.searchContainer,
+                            {
+                                backgroundColor: theme.colors.surfaceSecondary,
+                                borderRadius: theme.borderRadius.lg,
+                                paddingHorizontal: theme.spacing[3],
+                                paddingVertical: theme.spacing[2.5],
+                                gap: theme.spacing[2]
+                            }
+                        ]}
+                    >
+                        <Ionicons
+                            name="search"
+                            size={18}
+                            color={theme.colors.textTertiary}
+                            style={{ marginRight: theme.spacing[1] }}
+                        />
                         <TextInput
-                            style={styles.searchInput}
+                            style={[
+                                styles.searchInput,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.md
+                                }
+                            ]}
                             placeholder="Search exercises..."
                             value={searchQuery}
                             onChangeText={onSearchChange}
-                            placeholderTextColor="#999"
+                            placeholderTextColor={theme.colors.textMuted}
                             autoCorrect={false}
                             autoCapitalize="none"
                             returnKeyType="search"
                         />
                         {searchQuery.length > 0 && (
-                            <TouchableOpacity
+                            <Pressable
                                 onPress={() => onSearchChange('')}
-                                style={styles.clearButton}
+                                style={{ padding: theme.spacing[1] }}
                             >
-                                <Ionicons name="close-circle" size={18} color="#999" />
-                            </TouchableOpacity>
+                                <Ionicons
+                                    name="close-circle"
+                                    size={18}
+                                    color={theme.colors.textTertiary}
+                                />
+                            </Pressable>
                         )}
                     </View>
-                    <TouchableOpacity
-                        style={styles.filterButton}
+                    <Pressable
+                        style={[
+                            styles.filterButton,
+                            {
+                                padding: theme.spacing[2.5],
+                                borderRadius: theme.borderRadius.md,
+                                backgroundColor: theme.colors.surfaceSecondary
+                            }
+                        ]}
                         onPress={() => setShowFilters(true)}
                     >
-                        <Ionicons name="filter" size={20} color="#007AFF" />
+                        <Ionicons name="filter" size={20} color={theme.colors.primary} />
                         {activeFilterCount > 0 && (
-                            <View style={styles.filterBadge}>
-                                <Text style={styles.filterBadgeText}>{activeFilterCount}</Text>
+                            <View
+                                style={[
+                                    styles.filterBadge,
+                                    {
+                                        backgroundColor: theme.colors.primary,
+                                        borderRadius: 10
+                                    }
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        styles.filterBadgeText,
+                                        {
+                                            color: theme.colors.primaryForeground,
+                                            fontSize: theme.fontSizes.xs,
+                                            fontWeight: theme.fontWeights.semibold
+                                        }
+                                    ]}
+                                >
+                                    {activeFilterCount}
+                                </Text>
                             </View>
                         )}
-                    </TouchableOpacity>
+                    </Pressable>
                 </View>
             </ScalingView>
         </LargeHeader>
@@ -101,6 +196,7 @@ const LargeHeaderComponent: React.FC<
 }
 
 export default function ExercisesPage() {
+    const { theme } = useTheme()
     const [filters, setFilters] = useState<ExerciseFiltersType>({})
     const [showFilters, setShowFilters] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
@@ -139,9 +235,23 @@ export default function ExercisesPage() {
     // Show loading state during initial sync
     if (!isInitialized || (isSyncing && allExercises.length === 0)) {
         return (
-            <View style={[styles.container, styles.centerContent]}>
-                <ActivityIndicator size="large" color="#007AFF" />
-                <Text style={styles.loadingText}>
+            <View
+                style={[
+                    styles.container,
+                    styles.centerContent,
+                    { backgroundColor: theme.colors.background }
+                ]}
+            >
+                <ActivityIndicator size="large" color={theme.colors.primary} />
+                <Text
+                    style={[
+                        styles.loadingText,
+                        {
+                            color: theme.colors.textTertiary,
+                            fontSize: theme.fontSizes.sm
+                        }
+                    ]}
+                >
                     {isSyncing ? 'Syncing exercise database...' : 'Loading exercises...'}
                 </Text>
             </View>
@@ -153,9 +263,35 @@ export default function ExercisesPage() {
         console.error('Exercise Database Error:', error)
 
         return (
-            <View style={[styles.container, styles.centerContent]}>
-                <Text style={styles.errorText}>{error}</Text>
-                <Text style={styles.errorSubtext}>
+            <View
+                style={[
+                    styles.container,
+                    styles.centerContent,
+                    { backgroundColor: theme.colors.background }
+                ]}
+            >
+                <Text
+                    style={[
+                        styles.errorText,
+                        {
+                            color: theme.colors.error,
+                            fontSize: theme.fontSizes.xl,
+                            fontWeight: theme.fontWeights.semibold,
+                            marginBottom: theme.spacing[2]
+                        }
+                    ]}
+                >
+                    {error}
+                </Text>
+                <Text
+                    style={[
+                        styles.errorSubtext,
+                        {
+                            color: theme.colors.textSecondary,
+                            fontSize: theme.fontSizes.sm
+                        }
+                    ]}
+                >
                     Please check your internet connection and try again.
                 </Text>
             </View>
@@ -163,7 +299,7 @@ export default function ExercisesPage() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <ExerciseFiltersModal
                 visible={showFilters}
                 onClose={() => setShowFilters(false)}
@@ -175,12 +311,19 @@ export default function ExercisesPage() {
                 data={filteredAndSearchedExercises}
                 renderItem={({ item }) => <ExerciseCard exercise={item} />}
                 keyExtractor={(item) => item.externalId}
-                contentContainerStyle={styles.listContent}
+                contentContainerStyle={[
+                    styles.listContent,
+                    {
+                        paddingHorizontal: theme.spacing[5],
+                        paddingVertical: theme.spacing[4]
+                    }
+                ]}
                 HeaderComponent={(props) => (
                     <HeaderComponent
                         showNavBar={props.showNavBar}
                         scrollY={props.scrollY}
                         total={allExercises.length}
+                        theme={theme}
                     />
                 )}
                 LargeHeaderComponent={(props) => (
@@ -192,6 +335,7 @@ export default function ExercisesPage() {
                         setShowFilters={setShowFilters}
                         searchQuery={searchQuery}
                         onSearchChange={setSearchQuery}
+                        theme={theme}
                     />
                 )}
             />
@@ -201,8 +345,7 @@ export default function ExercisesPage() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9'
+        flex: 1
     },
     headerTop: {
         width: '100%',
@@ -213,79 +356,34 @@ const styles = StyleSheet.create({
     },
     searchRow: {
         flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        marginTop: 12
+        alignItems: 'center'
     },
     searchContainer: {
         flex: 1,
         flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        borderRadius: 12,
-        paddingHorizontal: 12,
-        paddingVertical: 10,
-        gap: 8
+        alignItems: 'center'
     },
     filterButton: {
-        position: 'relative',
-        padding: 10,
-        borderRadius: 8,
-        backgroundColor: '#f0f0f0'
+        position: 'relative'
     },
     filterBadge: {
         position: 'absolute',
         top: -4,
         right: -4,
-        backgroundColor: '#007AFF',
-        borderRadius: 10,
         minWidth: 20,
         height: 20,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 4
     },
-    filterBadgeText: {
-        color: '#fff',
-        fontSize: 11,
-        fontWeight: '600'
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#000'
-    },
-    count: {
-        fontSize: 14,
-        color: '#666',
-        fontWeight: '500'
-    },
-    listContent: {
-        paddingHorizontal: 20,
-        paddingVertical: 16
-    },
-    loadingFooter: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 20,
-        gap: 8
-    },
-    loadingText: {
-        fontSize: 14,
-        color: '#999'
-    },
-    searchIcon: {
-        marginRight: 4
-    },
+    filterBadgeText: {},
+    title: {},
+    count: {},
+    listContent: {},
+    loadingText: {},
     searchInput: {
         flex: 1,
-        fontSize: 16,
-        color: '#000',
         padding: 0
-    },
-    clearButton: {
-        padding: 4
     },
     centerContent: {
         justifyContent: 'center',
@@ -293,15 +391,9 @@ const styles = StyleSheet.create({
         padding: 20
     },
     errorText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#ff3b30',
-        marginBottom: 8,
         textAlign: 'center'
     },
     errorSubtext: {
-        fontSize: 14,
-        color: '#666',
         textAlign: 'center'
     }
 })

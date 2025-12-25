@@ -1,16 +1,10 @@
 import { useMemo, useState } from 'react'
-import {
-    ActivityIndicator,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { ExerciseFiltersModal } from '@/components/ExerciseFilters'
 import { useRoutineStore } from '@/store/store'
+import { Badge, Card, useTheme } from '@/ui'
 import { applyLocalFilters, searchLocalExercises } from '@/utils/exerciseSearch'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import { Ionicons } from '@expo/vector-icons'
@@ -20,6 +14,7 @@ import { useDebounce } from 'use-debounce'
 import type { ExerciseFiltersType } from '@packages/backend/convex/schema'
 
 export default function SelectExercisePage() {
+    const { theme } = useTheme()
     const { exercises: selectedExercises, addExercise } = useRoutineStore()
     const [filters, setFilters] = useState<ExerciseFiltersType>({})
     const [showFilters, setShowFilters] = useState(false)
@@ -72,10 +67,21 @@ export default function SelectExercisePage() {
 
     if (!isInitialized || (isSyncing && allExercises.length === 0)) {
         return (
-            <SafeAreaView style={styles.container} edges={['bottom']}>
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
-                    <Text style={styles.loadingText}>
+            <SafeAreaView
+                style={[styles.container, { backgroundColor: theme.colors.background }]}
+                edges={['bottom']}
+            >
+                <View style={[styles.loadingContainer, { gap: theme.spacing[3] }]}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <Text
+                        style={[
+                            styles.loadingText,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.md
+                            }
+                        ]}
+                    >
                         {isSyncing ? 'Syncing exercises...' : 'Loading exercises...'}
                     </Text>
                 </View>
@@ -87,10 +93,33 @@ export default function SelectExercisePage() {
         console.error('Exercise Database Error:', error)
 
         return (
-            <SafeAreaView style={styles.container} edges={['bottom']}>
+            <SafeAreaView
+                style={[styles.container, { backgroundColor: theme.colors.background }]}
+                edges={['bottom']}
+            >
                 <View style={styles.loadingContainer}>
-                    <Text style={styles.errorText}>{error}</Text>
-                    <Text style={styles.errorSubtext}>
+                    <Text
+                        style={[
+                            styles.errorText,
+                            {
+                                color: theme.colors.error,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.semibold,
+                                marginBottom: theme.spacing[2]
+                            }
+                        ]}
+                    >
+                        {error}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.errorSubtext,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.sm
+                            }
+                        ]}
+                    >
                         Please check your connection and try again.
                     </Text>
                 </View>
@@ -99,14 +128,49 @@ export default function SelectExercisePage() {
     }
 
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']}>
-            <View style={styles.filterBar}>
-                <TouchableOpacity style={styles.filterButton} onPress={() => setShowFilters(true)}>
-                    <Ionicons name="filter" size={20} color="#007AFF" />
-                    <Text style={styles.filterButtonText}>
+        <SafeAreaView
+            style={[styles.container, { backgroundColor: theme.colors.background }]}
+            edges={['bottom']}
+        >
+            <View
+                style={[
+                    styles.filterBar,
+                    {
+                        paddingHorizontal: theme.spacing[4],
+                        paddingVertical: theme.spacing[3],
+                        backgroundColor: theme.colors.surface,
+                        borderBottomWidth: 1,
+                        borderBottomColor: theme.colors.border
+                    }
+                ]}
+            >
+                <Pressable
+                    style={[
+                        styles.filterButton,
+                        {
+                            gap: theme.spacing[2],
+                            paddingVertical: theme.spacing[2],
+                            paddingHorizontal: theme.spacing[4],
+                            backgroundColor: theme.colors.surfaceSecondary,
+                            borderRadius: theme.borderRadius.full
+                        }
+                    ]}
+                    onPress={() => setShowFilters(true)}
+                >
+                    <Ionicons name="filter" size={20} color={theme.colors.primary} />
+                    <Text
+                        style={[
+                            styles.filterButtonText,
+                            {
+                                color: theme.colors.primary,
+                                fontSize: theme.fontSizes.sm,
+                                fontWeight: theme.fontWeights.medium
+                            }
+                        ]}
+                    >
                         Filters {activeFilterCount > 0 && `(${activeFilterCount})`}
                     </Text>
-                </TouchableOpacity>
+                </Pressable>
             </View>
 
             <ExerciseFiltersModal
@@ -116,22 +180,48 @@ export default function SelectExercisePage() {
                 onApplyFilters={handleApplyFilters}
             />
 
-            <View style={styles.searchContainer}>
-                <Ionicons name="search" size={18} color="#999" style={styles.searchIcon} />
+            <View
+                style={[
+                    styles.searchContainer,
+                    {
+                        backgroundColor: theme.colors.surfaceSecondary,
+                        borderRadius: theme.borderRadius.lg,
+                        paddingHorizontal: theme.spacing[3],
+                        gap: theme.spacing[2],
+                        marginHorizontal: theme.spacing[4],
+                        marginVertical: theme.spacing[3]
+                    }
+                ]}
+            >
+                <Ionicons
+                    name="search"
+                    size={18}
+                    color={theme.colors.textTertiary}
+                    style={{ marginRight: theme.spacing[1] }}
+                />
                 <TextInput
-                    style={styles.searchInput}
+                    style={[
+                        styles.searchInput,
+                        {
+                            color: theme.colors.text,
+                            fontSize: theme.fontSizes.md
+                        }
+                    ]}
                     placeholder="Search exercises..."
                     value={searchQuery}
                     onChangeText={setSearchQuery}
-                    placeholderTextColor="#999"
+                    placeholderTextColor={theme.colors.textMuted}
                     autoCorrect={false}
                     autoCapitalize="none"
                     returnKeyType="search"
                 />
                 {searchQuery.length > 0 && (
-                    <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
-                        <Ionicons name="close-circle" size={18} color="#999" />
-                    </TouchableOpacity>
+                    <Pressable
+                        onPress={() => setSearchQuery('')}
+                        style={{ padding: theme.spacing[1] }}
+                    >
+                        <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+                    </Pressable>
                 )}
             </View>
 
@@ -140,39 +230,105 @@ export default function SelectExercisePage() {
                 renderItem={({ item }) => {
                     const isSelected = selectedIds.has(item.externalId)
                     return (
-                        <TouchableOpacity
-                            style={[styles.exerciseItem, isSelected && styles.exerciseItemSelected]}
-                            onPress={() => handleSelectExercise(item.externalId)}
-                            disabled={isSelected}
+                        <Pressable
+                            onPress={() => {
+                                if (!isSelected) {
+                                    handleSelectExercise(item.externalId)
+                                }
+                            }}
                         >
-                            <View style={styles.exerciseContent}>
-                                <View style={styles.exerciseInfo}>
-                                    <Text style={styles.exerciseTitle}>{item.name}</Text>
-                                    <View style={styles.metaRow}>
-                                        <Text style={styles.exerciseCategory}>{item.category}</Text>
-                                        <Text style={styles.exerciseLevel}>{item.level}</Text>
+                            <Card
+                                elevation="sm"
+                                padding="md"
+                                style={[
+                                    styles.exerciseItem,
+                                    {
+                                        marginBottom: theme.spacing[3],
+                                        opacity: isSelected ? 0.6 : 1,
+                                        backgroundColor: isSelected
+                                            ? theme.colors.surfaceSecondary
+                                            : theme.colors.surface
+                                    }
+                                ]}
+                            >
+                                <View style={styles.exerciseContent}>
+                                    <View style={styles.exerciseInfo}>
+                                        <Text
+                                            style={[
+                                                styles.exerciseTitle,
+                                                {
+                                                    color: theme.colors.text,
+                                                    fontSize: theme.fontSizes.md,
+                                                    fontWeight: theme.fontWeights.semibold,
+                                                    marginBottom: theme.spacing[1.5]
+                                                }
+                                            ]}
+                                        >
+                                            {item.name}
+                                        </Text>
+                                        <View style={[styles.metaRow, { gap: theme.spacing[3] }]}>
+                                            <Text
+                                                style={[
+                                                    styles.exerciseCategory,
+                                                    {
+                                                        color: theme.colors.textSecondary,
+                                                        fontSize: theme.fontSizes.sm
+                                                    }
+                                                ]}
+                                            >
+                                                {item.category}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    styles.exerciseLevel,
+                                                    {
+                                                        color: theme.colors.primary,
+                                                        fontSize: theme.fontSizes.sm,
+                                                        fontWeight: theme.fontWeights.medium
+                                                    }
+                                                ]}
+                                            >
+                                                {item.level}
+                                            </Text>
+                                        </View>
                                     </View>
+                                    {isSelected && (
+                                        <Badge variant="success" size="sm">
+                                            Added
+                                        </Badge>
+                                    )}
+                                    <Pressable
+                                        style={[
+                                            styles.infoButton,
+                                            {
+                                                marginRight: theme.spacing[3],
+                                                padding: theme.spacing[1]
+                                            }
+                                        ]}
+                                        onPress={() => {
+                                            router.push(`/exercise/${item.externalId}`)
+                                        }}
+                                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                    >
+                                        <Ionicons
+                                            name="chevron-forward"
+                                            size={20}
+                                            color={theme.colors.primary}
+                                        />
+                                    </Pressable>
                                 </View>
-                                {isSelected && (
-                                    <View style={styles.selectedBadge}>
-                                        <Text style={styles.selectedBadgeText}>Added</Text>
-                                    </View>
-                                )}
-                                <TouchableOpacity
-                                    style={styles.infoButton}
-                                    onPress={() => {
-                                        router.push(`/exercise/${item.externalId}`)
-                                    }}
-                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                                >
-                                    <Ionicons name="chevron-forward" size={20} color="#007AFF" />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
+                            </Card>
+                        </Pressable>
                     )
                 }}
                 keyExtractor={(item) => item.externalId}
-                contentContainerStyle={styles.listContent}
+                contentContainerStyle={[
+                    styles.listContent,
+                    {
+                        paddingHorizontal: theme.spacing[4],
+                        paddingVertical: theme.spacing[2]
+                    }
+                ]}
             />
         </SafeAreaView>
     )
@@ -182,141 +338,54 @@ const styles = StyleSheet.create({
     searchContainer: {
         height: 40,
         flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        borderRadius: 12,
-        paddingHorizontal: 12,
-        gap: 8
+        alignItems: 'center'
     },
     container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9'
+        flex: 1
     },
-    filterBar: {
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: '#fff',
-        borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0'
-    },
+    filterBar: {},
     filterButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 8,
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 20,
         alignSelf: 'flex-start'
     },
-    filterButtonText: {
-        fontSize: 14,
-        color: '#007AFF',
-        fontWeight: '500'
-    },
-    listContent: {
-        paddingHorizontal: 16,
-        paddingVertical: 8
-    },
-    exerciseItem: {
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2
-    },
-    exerciseItemSelected: {
-        backgroundColor: '#f0f0f0',
-        opacity: 0.6
-    },
+    filterButtonText: {},
+    listContent: {},
+    exerciseItem: {},
     exerciseContent: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'
     },
-    infoButton: {
-        marginRight: 12,
-        padding: 4
-    },
+    infoButton: {},
     exerciseInfo: {
         flex: 1
     },
-    exerciseTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        marginBottom: 6
-    },
+    exerciseTitle: {},
     metaRow: {
-        flexDirection: 'row',
-        gap: 12
+        flexDirection: 'row'
     },
     exerciseCategory: {
-        fontSize: 13,
-        color: '#666',
         textTransform: 'capitalize'
     },
     exerciseLevel: {
-        fontSize: 13,
-        color: '#007AFF',
-        textTransform: 'capitalize',
-        fontWeight: '500'
-    },
-    selectedBadge: {
-        backgroundColor: '#4CAF50',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 12
-    },
-    selectedBadgeText: {
-        color: '#fff',
-        fontSize: 12,
-        fontWeight: '600'
-    },
-    loadingFooter: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 20
+        textTransform: 'capitalize'
     },
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 24,
-        gap: 12
+        padding: 24
     },
-    loadingText: {
-        fontSize: 16,
-        color: '#666'
-    },
+    loadingText: {},
     errorText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#ff3b30',
-        textAlign: 'center',
-        marginBottom: 8
-    },
-    errorSubtext: {
-        fontSize: 14,
-        color: '#666',
         textAlign: 'center'
     },
-
-    searchIcon: {
-        marginRight: 4
-    },
-    clearButton: {
-        padding: 4
+    errorSubtext: {
+        textAlign: 'center'
     },
     searchInput: {
         flex: 1,
-        fontSize: 16,
-        color: '#000',
         padding: 0
     }
 })

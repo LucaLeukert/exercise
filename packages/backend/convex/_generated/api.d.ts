@@ -9,7 +9,9 @@
  */
 
 import type * as exercises from "../exercises.js";
+import type * as friends from "../friends.js";
 import type * as routines from "../routines.js";
+import type * as userProfiles from "../userProfiles.js";
 import type * as workouts from "../workouts.js";
 
 import type {
@@ -20,7 +22,9 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   exercises: typeof exercises;
+  friends: typeof friends;
   routines: typeof routines;
+  userProfiles: typeof userProfiles;
   workouts: typeof workouts;
 }>;
 

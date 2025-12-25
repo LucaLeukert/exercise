@@ -1,40 +1,13 @@
 import * as React from 'react'
-import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
+import { Button } from '@/ui'
 import { fromThrowable } from '@/utils/result'
 import { useSSO } from '@clerk/clerk-expo'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
 // Required for OAuth flow
 WebBrowser.maybeCompleteAuthSession()
-
-const styles = StyleSheet.create({
-    button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#000',
-        paddingHorizontal: 20,
-        paddingVertical: 14,
-        borderRadius: 12,
-        gap: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3,
-        elevation: 5
-    },
-    buttonDisabled: {
-        opacity: 0.7
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '600',
-        letterSpacing: 0.5
-    }
-})
 
 export default function AppleSignIn() {
     const { startSSOFlow } = useSSO()
@@ -100,19 +73,15 @@ export default function AppleSignIn() {
     }
 
     return (
-        <Pressable
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+        <Button
+            title="Sign in with Apple"
             onPress={onPress}
-            disabled={isLoading}
-        >
-            {isLoading ? (
-                <ActivityIndicator color="#fff" size="small" />
-            ) : (
-                <>
-                    <Ionicons name="logo-apple" size={20} color="#fff" />
-                    <Text style={styles.buttonText}>Sign in with Apple</Text>
-                </>
-            )}
-        </Pressable>
+            loading={isLoading}
+            leftIcon={<Ionicons name="logo-apple" size={20} color="#FFFFFF" />}
+            variant="primary"
+            style={{ backgroundColor: '#000000' }}
+            textStyle={{ letterSpacing: 0.5 }}
+            fullWidth
+        />
     )
 }

@@ -1,22 +1,24 @@
 import { useState } from 'react'
 import {
     ActivityIndicator,
+    Pressable,
     ScrollView,
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity,
     View
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
 import { useRoutineStore } from '@/store/store'
+import { Button, Card, Input, useTheme } from '@/ui'
 import { api } from '@/utils/convex'
 import { wrapConvexMutation } from '@/utils/result'
 import { useExerciseDatabase } from '@/utils/useExerciseDatabase'
 import { useMutation } from 'convex/react'
 
 export default function CreateRoutinePage() {
+    const { theme } = useTheme()
     const {
         name,
         description,
@@ -81,10 +83,21 @@ export default function CreateRoutinePage() {
 
     if (!isInitialized || (isSyncing && allExercises.length === 0)) {
         return (
-            <SafeAreaView style={styles.container} edges={['bottom']}>
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#007AFF" />
-                    <Text style={styles.loadingText}>
+            <SafeAreaView
+                style={[styles.container, { backgroundColor: theme.colors.background }]}
+                edges={['bottom']}
+            >
+                <View style={[styles.loadingContainer, { gap: theme.spacing[3] }]}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <Text
+                        style={[
+                            styles.loadingText,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.md
+                            }
+                        ]}
+                    >
                         {isSyncing ? 'Syncing exercises...' : 'Loading exercises...'}
                     </Text>
                 </View>
@@ -96,10 +109,33 @@ export default function CreateRoutinePage() {
         console.error('Exercise Database Error:', error)
 
         return (
-            <SafeAreaView style={styles.container} edges={['bottom']}>
+            <SafeAreaView
+                style={[styles.container, { backgroundColor: theme.colors.background }]}
+                edges={['bottom']}
+            >
                 <View style={styles.loadingContainer}>
-                    <Text style={styles.errorText}>{error}</Text>
-                    <Text style={styles.errorSubtext}>
+                    <Text
+                        style={[
+                            styles.errorText,
+                            {
+                                color: theme.colors.error,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.semibold,
+                                marginBottom: theme.spacing[2]
+                            }
+                        ]}
+                    >
+                        {error}
+                    </Text>
+                    <Text
+                        style={[
+                            styles.errorSubtext,
+                            {
+                                color: theme.colors.textSecondary,
+                                fontSize: theme.fontSizes.sm
+                            }
+                        ]}
+                    >
                         Please check your connection and try again.
                     </Text>
                 </View>
@@ -108,53 +144,163 @@ export default function CreateRoutinePage() {
     }
 
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']}>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        <SafeAreaView
+            style={[styles.container, { backgroundColor: theme.colors.background }]}
+            edges={['bottom']}
+        >
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[styles.content, { paddingBottom: theme.spacing[10] }]}
+            >
                 {/* Routine Info Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Routine Information</Text>
+                <Card
+                    elevation="sm"
+                    padding="md"
+                    style={{
+                        marginHorizontal: theme.spacing[4],
+                        marginTop: theme.spacing[4]
+                    }}
+                >
+                    <Text
+                        style={[
+                            styles.sectionTitle,
+                            {
+                                color: theme.colors.text,
+                                fontSize: theme.fontSizes.xl,
+                                fontWeight: theme.fontWeights.bold,
+                                marginBottom: theme.spacing[4]
+                            }
+                        ]}
+                    >
+                        Routine Information
+                    </Text>
 
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Routine Name *</Text>
+                    <View style={[styles.inputContainer, { marginBottom: theme.spacing[4] }]}>
+                        <Text
+                            style={[
+                                styles.label,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.sm,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[2]
+                                }
+                            ]}
+                        >
+                            Routine Name *
+                        </Text>
                         <TextInput
-                            style={styles.input}
+                            style={[
+                                styles.input,
+                                {
+                                    borderWidth: 1,
+                                    borderColor: theme.colors.border,
+                                    borderRadius: theme.borderRadius.md,
+                                    padding: theme.spacing[3],
+                                    fontSize: theme.fontSizes.sm,
+                                    color: theme.colors.text,
+                                    backgroundColor: theme.colors.surfaceSecondary
+                                }
+                            ]}
                             placeholder="Enter routine name"
                             value={name}
                             onChangeText={setName}
-                            placeholderTextColor="#999"
+                            placeholderTextColor={theme.colors.textMuted}
                         />
                     </View>
 
                     <View style={styles.inputContainer}>
-                        <Text style={styles.label}>Description</Text>
+                        <Text
+                            style={[
+                                styles.label,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.sm,
+                                    fontWeight: theme.fontWeights.semibold,
+                                    marginBottom: theme.spacing[2]
+                                }
+                            ]}
+                        >
+                            Description
+                        </Text>
                         <TextInput
-                            style={[styles.input, styles.textArea]}
+                            style={[
+                                styles.input,
+                                styles.textArea,
+                                {
+                                    borderWidth: 1,
+                                    borderColor: theme.colors.border,
+                                    borderRadius: theme.borderRadius.md,
+                                    padding: theme.spacing[3],
+                                    fontSize: theme.fontSizes.sm,
+                                    color: theme.colors.text,
+                                    backgroundColor: theme.colors.surfaceSecondary
+                                }
+                            ]}
                             placeholder="Enter routine description (optional)"
                             value={description}
                             onChangeText={setDescription}
-                            placeholderTextColor="#999"
+                            placeholderTextColor={theme.colors.textMuted}
                             multiline
                             numberOfLines={3}
                         />
                     </View>
-                </View>
+                </Card>
 
                 {/* Exercises Section */}
-                <View style={styles.section}>
-                    <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitle}>Exercises</Text>
-                        <TouchableOpacity
-                            style={styles.addButton}
-                            onPress={() => router.push('/select-exercise')}
+                <Card
+                    elevation="sm"
+                    padding="md"
+                    style={{
+                        marginHorizontal: theme.spacing[4],
+                        marginTop: theme.spacing[4]
+                    }}
+                >
+                    <View style={[styles.sectionHeader, { marginBottom: theme.spacing[4] }]}>
+                        <Text
+                            style={[
+                                styles.sectionTitle,
+                                {
+                                    color: theme.colors.text,
+                                    fontSize: theme.fontSizes.xl,
+                                    fontWeight: theme.fontWeights.bold,
+                                    marginBottom: 0
+                                }
+                            ]}
                         >
-                            <Text style={styles.addButtonText}>+ Add Exercise</Text>
-                        </TouchableOpacity>
+                            Exercises
+                        </Text>
+                        <Button
+                            title="+ Add Exercise"
+                            onPress={() => router.push('/select-exercise')}
+                            size="sm"
+                        />
                     </View>
 
                     {exercises.length === 0 ? (
-                        <View style={styles.emptyState}>
-                            <Text style={styles.emptyStateText}>No exercises added yet</Text>
-                            <Text style={styles.emptyStateSubtext}>
+                        <View style={[styles.emptyState, { paddingVertical: theme.spacing[10] }]}>
+                            <Text
+                                style={[
+                                    styles.emptyStateText,
+                                    {
+                                        color: theme.colors.textTertiary,
+                                        fontSize: theme.fontSizes.md,
+                                        fontWeight: theme.fontWeights.semibold,
+                                        marginBottom: theme.spacing[2]
+                                    }
+                                ]}
+                            >
+                                No exercises added yet
+                            </Text>
+                            <Text
+                                style={[
+                                    styles.emptyStateSubtext,
+                                    {
+                                        color: theme.colors.textMuted,
+                                        fontSize: theme.fontSizes.sm
+                                    }
+                                ]}
+                            >
                                 Tap Add Exercise to get started
                             </Text>
                         </View>
@@ -164,29 +310,120 @@ export default function CreateRoutinePage() {
                                 (e) => e.externalId === exercise.exerciseId
                             )
                             return (
-                                <View key={exercise.exerciseId} style={styles.exerciseCard}>
-                                    <View style={styles.exerciseCardHeader}>
-                                        <View style={styles.exerciseNumber}>
-                                            <Text style={styles.exerciseNumberText}>
+                                <View
+                                    key={exercise.exerciseId}
+                                    style={[
+                                        styles.exerciseCard,
+                                        {
+                                            borderWidth: 1,
+                                            borderColor: theme.colors.border,
+                                            borderRadius: theme.borderRadius.md,
+                                            padding: theme.spacing[3],
+                                            marginBottom: theme.spacing[3]
+                                        }
+                                    ]}
+                                >
+                                    <View
+                                        style={[
+                                            styles.exerciseCardHeader,
+                                            { marginBottom: theme.spacing[3] }
+                                        ]}
+                                    >
+                                        <View
+                                            style={[
+                                                styles.exerciseNumber,
+                                                {
+                                                    width: 28,
+                                                    height: 28,
+                                                    borderRadius: 14,
+                                                    backgroundColor: theme.colors.primary,
+                                                    marginRight: theme.spacing[3]
+                                                }
+                                            ]}
+                                        >
+                                            <Text
+                                                style={[
+                                                    styles.exerciseNumberText,
+                                                    {
+                                                        color: theme.colors.primaryForeground,
+                                                        fontSize: theme.fontSizes.sm,
+                                                        fontWeight: theme.fontWeights.bold
+                                                    }
+                                                ]}
+                                            >
                                                 {index + 1}
                                             </Text>
                                         </View>
-                                        <Text style={styles.exerciseName}>
+                                        <Text
+                                            style={[
+                                                styles.exerciseName,
+                                                {
+                                                    color: theme.colors.text,
+                                                    fontSize: theme.fontSizes.md,
+                                                    fontWeight: theme.fontWeights.semibold
+                                                }
+                                            ]}
+                                        >
                                             {exerciseData?.name}
                                         </Text>
-                                        <TouchableOpacity
+                                        <Pressable
                                             onPress={() => removeExercise(exercise.exerciseId)}
-                                            style={styles.removeButton}
+                                            style={[
+                                                styles.removeButton,
+                                                {
+                                                    width: 32,
+                                                    height: 32,
+                                                    borderRadius: 16,
+                                                    backgroundColor: theme.colors.error
+                                                }
+                                            ]}
                                         >
-                                            <Text style={styles.removeButtonText}>✕</Text>
-                                        </TouchableOpacity>
+                                            <Text
+                                                style={[
+                                                    styles.removeButtonText,
+                                                    {
+                                                        color: theme.colors.errorForeground,
+                                                        fontSize: theme.fontSizes.xl,
+                                                        fontWeight: theme.fontWeights.semibold
+                                                    }
+                                                ]}
+                                            >
+                                                ✕
+                                            </Text>
+                                        </Pressable>
                                     </View>
 
-                                    <View style={styles.exerciseInputs}>
+                                    <View
+                                        style={[styles.exerciseInputs, { gap: theme.spacing[3] }]}
+                                    >
                                         <View style={styles.inputGroup}>
-                                            <Text style={styles.inputLabel}>Sets</Text>
+                                            <Text
+                                                style={[
+                                                    styles.inputLabel,
+                                                    {
+                                                        color: theme.colors.textSecondary,
+                                                        fontSize: theme.fontSizes.xs,
+                                                        fontWeight: theme.fontWeights.semibold,
+                                                        marginBottom: theme.spacing[1.5]
+                                                    }
+                                                ]}
+                                            >
+                                                Sets
+                                            </Text>
                                             <TextInput
-                                                style={styles.numberInput}
+                                                style={[
+                                                    styles.numberInput,
+                                                    {
+                                                        borderWidth: 1,
+                                                        borderColor: theme.colors.border,
+                                                        borderRadius: theme.borderRadius.sm,
+                                                        padding: theme.spacing[2.5],
+                                                        fontSize: theme.fontSizes.md,
+                                                        fontWeight: theme.fontWeights.semibold,
+                                                        color: theme.colors.text,
+                                                        backgroundColor: theme.colors.surface
+                                                    }
+                                                ]}
                                                 value={String(exercise.sets)}
                                                 onChangeText={(val) =>
                                                     handleUpdateExercise(
@@ -197,13 +434,38 @@ export default function CreateRoutinePage() {
                                                 }
                                                 keyboardType="numeric"
                                                 placeholder="3"
+                                                placeholderTextColor={theme.colors.textMuted}
                                             />
                                         </View>
 
                                         <View style={styles.inputGroup}>
-                                            <Text style={styles.inputLabel}>Reps</Text>
+                                            <Text
+                                                style={[
+                                                    styles.inputLabel,
+                                                    {
+                                                        color: theme.colors.textSecondary,
+                                                        fontSize: theme.fontSizes.xs,
+                                                        fontWeight: theme.fontWeights.semibold,
+                                                        marginBottom: theme.spacing[1.5]
+                                                    }
+                                                ]}
+                                            >
+                                                Reps
+                                            </Text>
                                             <TextInput
-                                                style={styles.numberInput}
+                                                style={[
+                                                    styles.numberInput,
+                                                    {
+                                                        borderWidth: 1,
+                                                        borderColor: theme.colors.border,
+                                                        borderRadius: theme.borderRadius.sm,
+                                                        padding: theme.spacing[2.5],
+                                                        fontSize: theme.fontSizes.md,
+                                                        fontWeight: theme.fontWeights.semibold,
+                                                        color: theme.colors.text,
+                                                        backgroundColor: theme.colors.surface
+                                                    }
+                                                ]}
                                                 value={String(exercise.reps)}
                                                 onChangeText={(val) =>
                                                     handleUpdateExercise(
@@ -214,6 +476,7 @@ export default function CreateRoutinePage() {
                                                 }
                                                 keyboardType="numeric"
                                                 placeholder="10"
+                                                placeholderTextColor={theme.colors.textMuted}
                                             />
                                         </View>
                                     </View>
@@ -221,38 +484,35 @@ export default function CreateRoutinePage() {
                             )
                         })
                     )}
-                </View>
+                </Card>
             </ScrollView>
 
             {/* Action Buttons */}
-            <View style={styles.actionSection}>
-                <TouchableOpacity
-                    style={[
-                        styles.createButton,
-                        (exercises.length === 0 || !name.trim() || isCreating) &&
-                            styles.createButtonDisabled
-                    ]}
+            <View
+                style={[
+                    styles.actionSection,
+                    {
+                        marginHorizontal: theme.spacing[4],
+                        marginTop: theme.spacing[6]
+                    }
+                ]}
+            >
+                <Button
+                    title="Create Routine"
                     onPress={handleCreateRoutine}
                     disabled={exercises.length === 0 || !name.trim() || isCreating}
-                >
-                    {isCreating ? (
-                        <ActivityIndicator size="small" color="#fff" />
-                    ) : (
-                        <Text style={styles.createButtonText}>Create Routine</Text>
-                    )}
-                </TouchableOpacity>
+                    loading={isCreating}
+                    fullWidth
+                    style={{ marginBottom: theme.spacing[3] }}
+                />
 
-                <TouchableOpacity
-                    style={styles.cancelButton}
+                <Button
+                    title="Cancel"
+                    variant="ghost"
                     onPress={() => router.back()}
                     disabled={isCreating}
-                >
-                    <Text
-                        style={[styles.cancelButtonText, isCreating && styles.cancelButtonDisabled]}
-                    >
-                        Cancel
-                    </Text>
-                </TouchableOpacity>
+                    fullWidth
+                />
             </View>
         </SafeAreaView>
     )
@@ -260,210 +520,70 @@ export default function CreateRoutinePage() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#f9f9f9'
+        flex: 1
     },
     scrollView: {
         flex: 1
     },
-    content: {
-        paddingBottom: 40
-    },
-    section: {
-        backgroundColor: '#fff',
-        marginHorizontal: 16,
-        marginTop: 16,
-        padding: 16,
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2
-    },
+    content: {},
     sectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 16
+        alignItems: 'center'
     },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 16
-    },
-    inputContainer: {
-        marginBottom: 16
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 8
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 14,
-        color: '#000',
-        backgroundColor: '#f5f5f5'
-    },
+    sectionTitle: {},
+    inputContainer: {},
+    label: {},
+    input: {},
     textArea: {
         textAlignVertical: 'top',
         minHeight: 80
     },
-    addButton: {
-        backgroundColor: '#007AFF',
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8
-    },
-    addButtonText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: '600'
-    },
     emptyState: {
-        alignItems: 'center',
-        paddingVertical: 40
+        alignItems: 'center'
     },
-    emptyStateText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#999',
-        marginBottom: 8
-    },
-    emptyStateSubtext: {
-        fontSize: 14,
-        color: '#bbb'
-    },
-    exerciseCard: {
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12
-    },
+    emptyStateText: {},
+    emptyStateSubtext: {},
+    exerciseCard: {},
     exerciseCardHeader: {
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 12
+        alignItems: 'center'
     },
     exerciseNumber: {
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        backgroundColor: '#007AFF',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 12
-    },
-    exerciseNumberText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: '700'
-    },
-    exerciseName: {
-        flex: 1,
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#000'
-    },
-    removeButton: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#ff6b6b',
         alignItems: 'center',
         justifyContent: 'center'
     },
-    removeButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: '600'
+    exerciseNumberText: {},
+    exerciseName: {
+        flex: 1
     },
+    removeButton: {
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    removeButtonText: {},
     exerciseInputs: {
-        flexDirection: 'row',
-        gap: 12
+        flexDirection: 'row'
     },
     inputGroup: {
         flex: 1
     },
-    inputLabel: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#666',
-        marginBottom: 6
-    },
+    inputLabel: {},
     numberInput: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 6,
-        padding: 10,
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        backgroundColor: '#fff',
         textAlign: 'center'
     },
-    actionSection: {
-        marginHorizontal: 16,
-        marginTop: 24
-    },
-    createButton: {
-        backgroundColor: '#007AFF',
-        padding: 16,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginBottom: 12
-    },
-    createButtonDisabled: {
-        backgroundColor: '#ccc',
-        opacity: 0.6
-    },
-    createButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '700'
-    },
-    cancelButton: {
-        backgroundColor: '#f0f0f0',
-        padding: 16,
-        borderRadius: 12,
-        alignItems: 'center'
-    },
-    cancelButtonText: {
-        color: '#666',
-        fontSize: 16,
-        fontWeight: '600'
-    },
-    cancelButtonDisabled: {
-        opacity: 0.5
-    },
+    actionSection: {},
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 24,
-        gap: 12
+        padding: 24
     },
-    loadingText: {
-        fontSize: 16,
-        color: '#666'
-    },
+    loadingText: {},
     errorText: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#ff3b30',
-        textAlign: 'center',
-        marginBottom: 8
+        textAlign: 'center'
     },
     errorSubtext: {
-        fontSize: 14,
-        color: '#666',
         textAlign: 'center'
     }
 })
