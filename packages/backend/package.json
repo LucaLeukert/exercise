@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "convex dev",
-    "setup": "convex dev --until-success",
+    "validate-env": "tsx scripts/validate-env.ts",
+    "dev": "pnpm validate-env && convex dev",
+    "setup": "pnpm validate-env && convex dev --until-success",
     "typecheck": "tsc --noEmit -p convex",
     "format": "prettier --check \"**/*.{js,jsx,ts,tsx,json}\" --ignore-path ../../.gitignore"
   },
@@ -15,7 +16,10 @@
     "openai": "^6.9.1"
   },
   "devDependencies": {
+    "@t3-oss/env-core": "^0.13.10",
     "@types/node": "^22.19.1",
-    "typescript": "5.9.3"
+    "tsx": "^4.21.0",
+    "typescript": "5.9.3",
+    "zod": "^4.2.1"
   }
 }
