@@ -10,6 +10,7 @@ import {
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router } from 'expo-router'
+import { VisibilitySelector } from '@/components/VisibilitySelector'
 import { useRoutineStore } from '@/store/store'
 import { Button, Card, Input, useTheme } from '@/ui'
 import { api } from '@/utils/convex'
@@ -23,8 +24,10 @@ export default function CreateRoutinePage() {
         name,
         description,
         exercises,
+        visibility,
         setName,
         setDescription,
+        setVisibility,
         removeExercise,
         updateExercise,
         reset
@@ -53,7 +56,8 @@ export default function CreateRoutinePage() {
             {
                 name,
                 description: description || undefined,
-                exercises
+                exercises,
+                visibility
             },
             (error) => ({
                 type: 'mutation_error' as const,
@@ -245,6 +249,8 @@ export default function CreateRoutinePage() {
                             numberOfLines={3}
                         />
                     </View>
+
+                    <VisibilitySelector value={visibility} onChange={setVisibility} />
                 </Card>
 
                 {/* Exercises Section */}

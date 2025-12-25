@@ -1,5 +1,5 @@
-import { useMemo } from 'react'
-import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native'
+import { useEffect, useMemo, useState } from 'react'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { BackButton } from '@/components/BackButton'
@@ -7,6 +7,7 @@ import { Avatar, Badge, Card, Separator, Text, TextWeight, Theme, useTheme } fro
 import { api } from '@/utils/convex'
 import { useUser } from '@clerk/clerk-expo'
 import { Ionicons } from '@expo/vector-icons'
+import { FlashList } from '@shopify/flash-list'
 import { useQuery as useReactQuery } from '@tanstack/react-query'
 import { useAction, useQuery } from 'convex/react'
 
@@ -86,6 +87,37 @@ export default function SpectateWorkoutPage() {
         })
         return map
     }, [workout?.state?.sets])
+
+    // Convert setsByExercise to array for FlashList
+    const exerciseList = useMemo(() => {
+        return Array.from(setsByExercise.entries()).map(([exerciseId, sets]) => ({
+            exerciseId,
+            sets,
+            exerciseName: exerciseMap.get(exerciseId) || exerciseId
+        }))
+    }, [setsByExercise, exerciseMap])
+
+    const [elapsedTime, setElapsedTime] = useState(0)
+
+    // Update elapsed time every second
+    useEffect(() => {
+        if (!workout || workout.status !== 'active') {
+            setElapsedTime(0)
+            return
+        }
+
+        // Set initial time
+        setElapsedTime(Date.now() - workout.startedAt)
+
+        // Update every second
+        const interval = setInterval(() => {
+            if (workout && workout.status === 'active') {
+                setElapsedTime(Date.now() - workout.startedAt)
+            }
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [workout])
 
     const formatDuration = (ms: number) => {
         const totalSeconds = Math.floor(ms / 1000)
@@ -180,10 +212,13 @@ export default function SpectateWorkoutPage() {
     }
 
     const isOwnWorkout = workout.userId === currentUser?.id
+
     const displayName = isOwnWorkout
         ? currentUser?.fullName || currentUser?.firstName || 'You'
         : clerkInfo?.fullName || clerkInfo?.firstName || workout.userId.slice(0, 8) + '...'
+
     const avatarUrl = isOwnWorkout ? currentUser?.imageUrl || null : clerkInfo?.imageUrl || null
+
     const fallback = isOwnWorkout
         ? currentUser?.firstName?.[0] || currentUser?.fullName?.[0] || 'U'
         : clerkInfo?.firstName?.[0]?.toUpperCase() ||
@@ -191,156 +226,130 @@ export default function SpectateWorkoutPage() {
           workout.userId[0]?.toUpperCase() ||
           'U'
 
-    const duration = Date.now() - workout.startedAt
     const routineName = routine?.name || 'Quick Workout'
 
+    const renderHeader = () => (
+        <Card elevation="sm" padding="md" style={{ marginBottom: theme.spacing[4] }}>
+            <View style={[styles.header, { marginBottom: theme.spacing[4] }]}>
+                <Avatar size="md" source={avatarUrl} fallback={fallback} />
+                <View style={{ marginLeft: theme.spacing[3], flex: 1 }}>
+                    <Text variant="default" size="md" weight="semibold">
+                        {displayName}
+                    </Text>
+                    <Text variant="secondary" size="sm">
+                        {routineName}
+                    </Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                    <Badge variant="error">
+                        <Text variant="default" size="xs" weight="bold">
+                            LIVE
+                        </Text>
+                    </Badge>
+                    <Text variant="secondary" size="sm" style={{ marginTop: theme.spacing[1] }}>
+                        {formatDuration(elapsedTime)}
+                    </Text>
+                </View>
+            </View>
+        </Card>
+    )
+
+    const renderEmpty = () => (
+        <Card elevation="sm" padding="lg">
+            <View style={styles.emptyState}>
+                <Ionicons name="fitness-outline" size={48} color={theme.colors.textTertiary} />
+                <Text
+                    variant="secondary"
+                    size="md"
+                    style={{ marginTop: theme.spacing[3], textAlign: 'center' }}
+                >
+                    No exercises started yet
+                </Text>
+            </View>
+        </Card>
+    )
+
+    const renderItem = ({ item }: { item: (typeof exerciseList)[0] }) => {
+        const completedSets = item.sets.filter((s) => s.completed).length
+        const totalSets = item.sets.length
+
+        return (
+            <Card elevation="sm" padding="md" style={{ marginBottom: theme.spacing[3] }}>
+                <View style={{ marginBottom: theme.spacing[3] }}>
+                    <Text variant="default" size="lg" weight="semibold">
+                        {item.exerciseName}
+                    </Text>
+                    <Text variant="secondary" size="sm">
+                        {completedSets} of {totalSets} sets completed
+                    </Text>
+                </View>
+
+                <Separator orientation="horizontal" style={{ marginBottom: theme.spacing[3] }} />
+
+                <View style={{ gap: theme.spacing[2] }}>
+                    {item.sets.map((set, index) => (
+                        <View
+                            key={index}
+                            style={[
+                                styles.setRow,
+                                {
+                                    backgroundColor: set.completed
+                                        ? theme.colors.primary + '20'
+                                        : theme.colors.surface,
+                                    padding: theme.spacing[2],
+                                    borderRadius: theme.borderRadius.sm
+                                }
+                            ]}
+                        >
+                            <Text
+                                variant="default"
+                                size="sm"
+                                weight={set.completed ? 'semibold' : ('regular' as TextWeight)}
+                            >
+                                Set {set.setNumber}
+                            </Text>
+                            <View style={styles.setInfo}>
+                                <Text variant="secondary" size="sm">
+                                    {set.completedReps} / {set.targetReps} reps
+                                </Text>
+                                {set.weight > 0 && (
+                                    <Text variant="secondary" size="sm">
+                                        {set.weight} kg
+                                    </Text>
+                                )}
+                            </View>
+                            {set.completed && (
+                                <Ionicons
+                                    name="checkmark-circle"
+                                    size={20}
+                                    color={theme.colors.success}
+                                />
+                            )}
+                        </View>
+                    ))}
+                </View>
+            </Card>
+        )
+    }
+
     return (
-        <SafeAreaView
-            style={[styles.container, { backgroundColor: theme.colors.background }]}
-            edges={['bottom']}
-        >
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <Screen theme={theme} />
 
-            <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={[styles.content, { padding: theme.spacing[5] }]}
-            >
-                <Card elevation="sm" padding="lg" style={{ marginBottom: theme.spacing[4] }}>
-                    <View style={[styles.header, { marginBottom: theme.spacing[4] }]}>
-                        <Avatar size="md" source={avatarUrl} fallback={fallback} />
-                        <View style={{ marginLeft: theme.spacing[3], flex: 1 }}>
-                            <Text variant="default" size="md" weight="semibold">
-                                {displayName}
-                            </Text>
-                            <Text variant="secondary" size="sm">
-                                {routineName}
-                            </Text>
-                        </View>
-                        <View style={{ alignItems: 'flex-end' }}>
-                            <Badge variant="error">
-                                <Text variant="default" size="xs" weight="bold">
-                                    LIVE
-                                </Text>
-                            </Badge>
-                            <Text
-                                variant="secondary"
-                                size="sm"
-                                style={{ marginTop: theme.spacing[1] }}
-                            >
-                                {formatDuration(duration)}
-                            </Text>
-                        </View>
-                    </View>
-                </Card>
-
-                {setsByExercise.size === 0 ? (
-                    <Card elevation="sm" padding="lg">
-                        <View style={styles.emptyState}>
-                            <Ionicons
-                                name="fitness-outline"
-                                size={48}
-                                color={theme.colors.textTertiary}
-                            />
-                            <Text
-                                variant="secondary"
-                                size="md"
-                                style={{ marginTop: theme.spacing[3], textAlign: 'center' }}
-                            >
-                                No exercises started yet
-                            </Text>
-                        </View>
-                    </Card>
-                ) : (
-                    Array.from(setsByExercise.entries()).map(([exerciseId, sets]) => {
-                        const exerciseName = exerciseMap.get(exerciseId) || exerciseId
-                        const completedSets = sets.filter((s) => s.completed).length
-                        const totalSets = sets.length
-
-                        return (
-                            <Card
-                                key={exerciseId}
-                                elevation="sm"
-                                padding="md"
-                                style={{ marginBottom: theme.spacing[3] }}
-                            >
-                                <View style={{ marginBottom: theme.spacing[3] }}>
-                                    <Text variant="default" size="lg" weight="semibold">
-                                        {exerciseName}
-                                    </Text>
-                                    <Text variant="secondary" size="sm">
-                                        {completedSets} of {totalSets} sets completed
-                                    </Text>
-                                </View>
-
-                                <Separator
-                                    orientation="horizontal"
-                                    style={{ marginBottom: theme.spacing[3] }}
-                                />
-
-                                <View style={{ gap: theme.spacing[2] }}>
-                                    {sets.map((set, index) => (
-                                        <View
-                                            key={index}
-                                            style={[
-                                                styles.setRow,
-                                                {
-                                                    backgroundColor: set.completed
-                                                        ? theme.colors.primary + '20'
-                                                        : theme.colors.surface,
-                                                    padding: theme.spacing[2],
-                                                    borderRadius: theme.borderRadius.sm
-                                                }
-                                            ]}
-                                        >
-                                            <Text
-                                                variant="default"
-                                                size="sm"
-                                                weight={
-                                                    set.completed
-                                                        ? 'semibold'
-                                                        : ('regular' as TextWeight)
-                                                }
-                                            >
-                                                Set {set.setNumber}
-                                            </Text>
-                                            <View style={styles.setInfo}>
-                                                <Text variant="secondary" size="sm">
-                                                    {set.completedReps} / {set.targetReps} reps
-                                                </Text>
-                                                {set.weight > 0 && (
-                                                    <Text variant="secondary" size="sm">
-                                                        {set.weight} kg
-                                                    </Text>
-                                                )}
-                                            </View>
-                                            {set.completed && (
-                                                <Ionicons
-                                                    name="checkmark-circle"
-                                                    size={20}
-                                                    color={theme.colors.success}
-                                                />
-                                            )}
-                                        </View>
-                                    ))}
-                                </View>
-                            </Card>
-                        )
-                    })
-                )}
-            </ScrollView>
-        </SafeAreaView>
+            <FlashList
+                data={exerciseList}
+                renderItem={renderItem}
+                ListHeaderComponent={renderHeader}
+                ListEmptyComponent={renderEmpty}
+                contentContainerStyle={{ padding: theme.spacing[5] }}
+            />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1
-    },
-    scrollView: {
-        flex: 1
-    },
-    content: {
-        flexGrow: 1
     },
     loadingContainer: {
         flex: 1,
@@ -354,10 +363,6 @@ const styles = StyleSheet.create({
         padding: 20
     },
     header: {
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    liveIndicator: {
         flexDirection: 'row',
         alignItems: 'center'
     },

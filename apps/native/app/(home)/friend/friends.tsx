@@ -1,5 +1,5 @@
 import type { ReactMutation } from 'convex/react'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
@@ -102,6 +102,26 @@ const ActiveWorkoutBadge = ({ workoutId, userId, theme }: ActiveWorkoutBadgeProp
         workout?.routineId ? { id: workout.routineId } : 'skip'
     )
 
+    const [elapsedTime, setElapsedTime] = useState(0)
+
+    // Update elapsed time every second
+    useEffect(() => {
+        if (!workout || workout.status !== 'active') {
+            setElapsedTime(0)
+            return
+        }
+
+        // Set initial time
+        setElapsedTime(Date.now() - workout.startedAt)
+
+        // Update every second
+        const interval = setInterval(() => {
+            setElapsedTime(Date.now() - workout.startedAt)
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [workout])
+
     const formatDuration = (ms: number) => {
         const minutes = Math.floor(ms / 60000)
         if (minutes < 60) return `${minutes}m`
@@ -157,7 +177,6 @@ const ActiveWorkoutBadge = ({ workoutId, userId, theme }: ActiveWorkoutBadgeProp
         return null
     }
 
-    const duration = Date.now() - workout.startedAt
     const routineName = routine?.name
 
     return (
@@ -192,7 +211,7 @@ const ActiveWorkoutBadge = ({ workoutId, userId, theme }: ActiveWorkoutBadgeProp
                         size="xs"
                         style={{ color: theme.colors.primaryForeground }}
                     >
-                        {formatDuration(duration)}
+                        {formatDuration(elapsedTime)}
                     </Text>
                     <Ionicons
                         name="chevron-forward"

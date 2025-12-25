@@ -68,6 +68,15 @@ export const start = mutation({
             throw new Error('Unauthorized')
         }
 
+        // If routineId is provided, use the routine's visibility
+        let workoutVisibility: 'private' | 'friends' | 'public' = args.visibility ?? 'private'
+        if (args.routineId) {
+            const routine = await ctx.db.get(args.routineId)
+            if (routine) {
+                workoutVisibility = routine.visibility
+            }
+        }
+
         const now = Date.now()
         const progress = args.initialProgress ?? {
             sets: [],
@@ -83,7 +92,7 @@ export const start = mutation({
             userId: identity.subject,
             routineId: args.routineId,
             status: 'active',
-            visibility: args.visibility ?? 'private',
+            visibility: workoutVisibility,
             state: progress,
             startedAt: now,
             lastHeartbeat: now

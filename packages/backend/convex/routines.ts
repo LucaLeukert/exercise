@@ -3,6 +3,57 @@ import { v } from 'convex/values'
 import { mutation, query } from './_generated/server'
 import { exerciseInRoutineValidator } from './schema'
 
+// Helper function to check if a user can view a routine
+async function canViewRoutine(
+    ctx: any,
+    routineUserId: string,
+    visibility: 'private' | 'friends' | 'public',
+    viewerId: string | undefined
+): Promise<boolean> {
+    // Owner can always view
+    if (viewerId === routineUserId) {
+        return true
+    }
+
+    // Public routines can be viewed by anyone
+    if (visibility === 'public') {
+        return true
+    }
+
+    // Private routines can only be viewed by owner (already checked above)
+    if (visibility === 'private') {
+        return false
+    }
+
+    // Friends visibility: check if users are friends
+    if (visibility === 'friends' && viewerId) {
+        // Check if friendship exists in either direction
+        const asRequester = await ctx.db
+            .query('friends')
+            .withIndex('by_requesterId_recipientId', (q: any) =>
+                q.eq('requesterId', viewerId).eq('recipientId', routineUserId)
+            )
+            .first()
+
+        if (asRequester && asRequester.status === 'accepted') {
+            return true
+        }
+
+        const asRecipient = await ctx.db
+            .query('friends')
+            .withIndex('by_requesterId_recipientId', (q: any) =>
+                q.eq('requesterId', routineUserId).eq('recipientId', viewerId)
+            )
+            .first()
+
+        if (asRecipient && asRecipient.status === 'accepted') {
+            return true
+        }
+    }
+
+    return false
+}
+
 // Get all routines for the authenticated user
 export const list = query({
     args: {},
@@ -33,9 +84,21 @@ export const getById = query({
 
         const routine = await ctx.db.get(args.id)
 
-        // if (!routine || routine.userId !== identity.subject) {
-        //     return null
-        // }
+        if (!routine) {
+            return null
+        }
+
+        // Check if viewer can access this routine
+        const canView = await canViewRoutine(
+            ctx,
+            routine.userId,
+            routine.visibility,
+            identity.subject
+        )
+
+        if (!canView) {
+            return null
+        }
 
         return routine
     }
@@ -46,7 +109,10 @@ export const create = mutation({
     args: {
         name: v.string(),
         description: v.optional(v.string()),
-        exercises: v.array(exerciseInRoutineValidator)
+        exercises: v.array(exerciseInRoutineValidator),
+        visibility: v.optional(
+            v.union(v.literal('private'), v.literal('friends'), v.literal('public'))
+        )
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity()
@@ -61,6 +127,7 @@ export const create = mutation({
             name: args.name,
             description: args.description,
             exercises: args.exercises,
+            visibility: args.visibility ?? 'private',
             createdAt: now,
             updatedAt: now
         })
@@ -75,7 +142,10 @@ export const update = mutation({
         id: v.id('routines'),
         name: v.optional(v.string()),
         description: v.optional(v.string()),
-        exercises: v.optional(v.array(exerciseInRoutineValidator))
+        exercises: v.optional(v.array(exerciseInRoutineValidator)),
+        visibility: v.optional(
+            v.union(v.literal('private'), v.literal('friends'), v.literal('public'))
+        )
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity()
@@ -92,6 +162,7 @@ export const update = mutation({
             name: string
             description: string
             exercises: typeof args.exercises
+            visibility: 'private' | 'friends' | 'public'
             updatedAt: number
         }> = {
             updatedAt: Date.now()
@@ -100,6 +171,7 @@ export const update = mutation({
         if (args.name !== undefined) updates.name = args.name
         if (args.description !== undefined) updates.description = args.description
         if (args.exercises !== undefined) updates.exercises = args.exercises
+        if (args.visibility !== undefined) updates.visibility = args.visibility
 
         await ctx.db.patch(args.id, updates)
 

@@ -155,6 +155,7 @@ export default defineSchema({
         name: v.string(),
         description: v.optional(v.string()),
         exercises: v.array(exerciseInRoutineValidator),
+        visibility: v.union(v.literal('private'), v.literal('friends'), v.literal('public')),
         createdAt: v.number(),
         updatedAt: v.number()
     })

@@ -27,8 +27,10 @@ export interface RoutineState {
     name: string
     description: string
     exercises: ExerciseInRoutine[]
+    visibility: 'private' | 'friends' | 'public'
     setName: (name: string) => void
     setDescription: (description: string) => void
+    setVisibility: (visibility: 'private' | 'friends' | 'public') => void
     addExercise: (exercise: ExerciseInRoutine) => void
     removeExercise: (exerciseId: string) => void
     updateExercise: (exerciseId: string, updates: Partial<ExerciseInRoutine>) => void
@@ -39,8 +41,10 @@ export const useRoutineStore = create<RoutineState>((set) => ({
     name: '',
     description: '',
     exercises: [],
+    visibility: 'private',
     setName: (name) => set({ name }),
     setDescription: (description) => set({ description }),
+    setVisibility: (visibility) => set({ visibility }),
     addExercise: (exercise) =>
         set((state) => ({
             exercises: [...state.exercises, exercise]
@@ -55,7 +59,7 @@ export const useRoutineStore = create<RoutineState>((set) => ({
                 e.exerciseId === exerciseId ? { ...e, ...updates } : e
             )
         })),
-    reset: () => set({ name: '', description: '', exercises: [] })
+    reset: () => set({ name: '', description: '', exercises: [], visibility: 'private' })
 }))
 
 export interface ExerciseDatabaseState {
