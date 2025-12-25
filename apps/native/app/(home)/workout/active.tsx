@@ -148,7 +148,7 @@ export default function ActiveWorkoutPage() {
     // Redirect if no active workout
     useEffect(() => {
         if (activeSession === null) {
-            router.replace('/(home)')
+            router.replace('/')
         }
     }, [activeSession])
 
@@ -217,7 +217,7 @@ export default function ActiveWorkoutPage() {
 
         result.match(
             () => {
-                router.replace('/(home)')
+                router.replace('/')
             },
             () => {
                 Alert.alert('Error', 'Failed to complete workout. Please try again.')
@@ -238,7 +238,7 @@ export default function ActiveWorkoutPage() {
                         const result = await cancelWorkout()
                         result.match(
                             () => {
-                                router.replace('/(home)')
+                                router.replace('/')
                             },
                             (error) => {
                                 console.error('Failed to cancel workout:', error)

@@ -114,12 +114,26 @@ export type WorkoutProgress = Infer<typeof workoutProgressValidator>
 // User profile
 export const userProfileValidator = v.object({
     userId: v.string(),
-    username: v.optional(v.string()),
     bio: v.optional(v.string()),
-    profileImageUrl: v.optional(v.string()),
     totalWorkouts: v.number(),
     totalWorkoutTime: v.number(),
     level: v.union(v.literal('beginner'), v.literal('intermediate'), v.literal('expert'), v.null()),
+    // Onboarding fields
+    onboardingCompleted: v.boolean(),
+    // Preferences
+    units: v.union(v.literal('metric'), v.literal('imperial')),
+    // Fitness goals
+    goals: v.optional(v.array(v.string())),
+    // Preferred workout times
+    preferredWorkoutTime: v.optional(
+        v.union(
+            v.literal('morning'),
+            v.literal('afternoon'),
+            v.literal('evening'),
+            v.literal('anytime'),
+            v.null()
+        )
+    ),
     createdAt: v.number(),
     updatedAt: v.number()
 })
@@ -167,8 +181,7 @@ export default defineSchema({
         .index('by_userId_status', ['userId', 'status']),
 
     userProfiles: defineTable(userProfileValidator)
-        .index('by_userId', ['userId'])
-        .index('by_username', ['username']),
+        .index('by_userId', ['userId']),
 
     friends: defineTable({
         requesterId: v.string(),

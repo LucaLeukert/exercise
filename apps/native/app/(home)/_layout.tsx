@@ -28,11 +28,10 @@ export default function HomeLayout() {
     return (
         <Stack>
             <Stack.Screen
-                name="exercise/[id]"
+                name="index"
                 options={{
-                    presentation: 'modal',
-                    title: 'Exercise Details',
-                    headerShown: true
+                    title: 'Home',
+                    headerShown: false
                 }}
             />
             <Stack.Screen
@@ -41,6 +40,66 @@ export default function HomeLayout() {
                     presentation: 'modal',
                     title: 'Exercises',
                     headerShown: false
+                }}
+            />
+            <Stack.Screen
+                name="exercise/[id]"
+                options={{
+                    presentation: 'modal',
+                    title: 'Exercise Details',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="friend/friends"
+                options={{
+                    title: 'Friends',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="friend/add-friend"
+                options={{
+                    presentation: 'modal',
+                    title: 'Add Friend',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="routine/create"
+                options={{
+                    title: 'Create Routine',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="routine/select-exercise"
+                options={{
+                    presentation: 'modal',
+                    title: 'Select Exercise',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="profile/[id]"
+                options={{
+                    title: 'Profile',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="profile/edit"
+                options={{
+                    title: 'Edit Profile',
+                    headerShown: true
+                }}
+            />
+            <Stack.Screen
+                name="onboarding"
+                options={{
+                    title: 'Welcome!',
+                    headerShown: false,
+                    presentation: 'fullScreenModal'
                 }}
             />
         </Stack>

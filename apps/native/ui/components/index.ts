@@ -88,3 +88,11 @@ export type { AlertProps, AlertVariant } from './Alert'
 // Text
 export { Text } from './Text'
 export type { TextProps, TextVariant, TextSize, TextWeight } from './Text'
+
+// Skeleton
+export { Skeleton, SkeletonText, SkeletonAvatar } from './Skeleton'
+export type {
+    SkeletonProps,
+    SkeletonTextProps,
+    SkeletonAvatarProps
+} from './Skeleton'

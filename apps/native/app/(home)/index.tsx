@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { log } from 'console'
+import { useEffect, useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
@@ -31,8 +32,18 @@ export default function HomePage() {
     const [showThemePicker, setShowThemePicker] = useState(false)
     const [showClearConfirm, setShowClearConfirm] = useState(false)
 
+    const needsOnboarding = useQuery(api.userProfiles.needsOnboarding, {})
     const routines = useQuery(api.routines.list, {})
-    const isLoading = routines === undefined
+
+    // Redirect to onboarding if needed
+    useEffect(() => {
+        if (needsOnboarding) {
+            console.log('needsOnboarding', needsOnboarding)
+            router.replace('/onboarding')
+        }
+    }, [needsOnboarding])
+
+    const isLoading = routines === undefined || needsOnboarding === undefined
     // TODO: Use recentWorkouts for workout history section
     // const recentWorkouts = useQuery(api.workouts.recent, {})
     const deleteRoutineMutation = useMutation(api.routines.remove)
@@ -85,11 +96,11 @@ export default function HomePage() {
                     </Text>
                 </View>
                 <View style={[styles.headerButtons, { gap: theme.spacing[3] }]}>
-                    <TouchableOpacity onPress={() => router.push('/friends' as any)}>
+                    <TouchableOpacity onPress={() => router.push('/friend/friends' as any)}>
                         <Ionicons name="people" size={24} color={theme.colors.primary} />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => router.push('/profile' as any)}
+                        onPress={() => router.push(`/profile/${user?.id}` as any)}
                         style={{ marginRight: theme.spacing[2] }}
                     >
                         <Ionicons name="person-circle" size={28} color={theme.colors.primary} />
@@ -205,7 +216,7 @@ export default function HomePage() {
                         },
                         theme.shadows.sm
                     ]}
-                    onPress={() => router.push('/create')}
+                    onPress={() => router.push('/routine/create')}
                 >
                     <Ionicons name="add-circle" size={24} color={theme.colors.primary} />
                     <Text
@@ -417,7 +428,7 @@ export default function HomePage() {
                                 )}
                                 <Button
                                     title="Start Workout"
-                                    onPress={() => router.push(`/(home)/workout/${item._id}`)}
+                                    onPress={() => router.push(`/workout/${item._id}`)}
                                     leftIcon={
                                         <Ionicons name="play-circle" size={20} color="#fff" />
                                     }
