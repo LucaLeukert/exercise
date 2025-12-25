@@ -1,4 +1,3 @@
-import { useColorScheme } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 
@@ -116,7 +115,7 @@ export interface ThemeState {
     toggleTheme: () => Promise<void>
     setFollowSystem: (follow: boolean) => Promise<void>
     registerCustomTheme: (name: string, theme: Partial<Theme> & { colors: ColorTokens }) => void
-    initializeTheme: () => Promise<void>
+    initializeTheme: (defaultTheme?: string, defaultFollowSystem?: boolean) => Promise<void>
     updateSystemColorScheme: (scheme: 'light' | 'dark' | null) => void
 }
 
@@ -204,11 +203,17 @@ export const useThemeStore = create<ThemeState>((set, get) => {
             set({ availableThemes: getThemeNames() })
         },
 
-        initializeTheme: async () => {
+        initializeTheme: async (
+            defaultTheme?: string,
+            defaultFollowSystem?: boolean
+        ) => {
             try {
                 const stored = await AsyncStorage.getItem(THEME_STORAGE_KEY)
-                let themeName: ThemeName = defaultThemeName
-                let followSystem = true
+                let themeName: ThemeName = defaultTheme && hasTheme(defaultTheme as ThemeName)
+                    ? (defaultTheme as ThemeName)
+                    : defaultThemeName
+                let followSystem =
+                    defaultFollowSystem !== undefined ? defaultFollowSystem : true
 
                 if (stored) {
                     const parsed = JSON.parse(stored)

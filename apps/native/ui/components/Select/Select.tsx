@@ -145,52 +145,54 @@ export function Select({
                     style={[styles.overlay, { backgroundColor: theme.colors.overlay }]}
                     onPress={() => setIsOpen(false)}
                 >
-                    <View
-                        style={[
-                            styles.dropdown,
-                            {
-                                backgroundColor: theme.colors.surface,
-                                borderRadius: theme.borderRadius.xl
-                            },
-                            theme.shadows.xl
-                        ]}
-                    >
-                        <FlatList
-                            data={options}
-                            keyExtractor={(item) => item.value}
-                            renderItem={({ item }) => (
-                                <Pressable
-                                    onPress={() => handleSelect(item)}
-                                    style={({ pressed }) => [
-                                        styles.option,
-                                        {
-                                            backgroundColor: pressed
-                                                ? theme.colors.surfaceSecondary
-                                                : 'transparent',
-                                            paddingHorizontal: theme.spacing[4],
-                                            paddingVertical: theme.spacing[3]
-                                        },
-                                        item.value === value && {
-                                            backgroundColor: theme.colors.surfaceSecondary
-                                        }
-                                    ]}
-                                >
-                                    <Text
-                                        style={{
-                                            color: theme.colors.text,
-                                            fontSize: theme.fontSizes.md,
-                                            fontWeight:
-                                                item.value === value
-                                                    ? theme.fontWeights.semibold
-                                                    : theme.fontWeights.normal
-                                        }}
+                    <Pressable onPress={(e) => e.stopPropagation()}>
+                        <View
+                            style={[
+                                styles.dropdown,
+                                {
+                                    backgroundColor: theme.colors.surface,
+                                    borderRadius: theme.borderRadius.xl
+                                },
+                                theme.shadows.xl
+                            ]}
+                        >
+                            <FlatList
+                                data={options}
+                                keyExtractor={(item) => item.value}
+                                renderItem={({ item }) => (
+                                    <Pressable
+                                        onPress={() => handleSelect(item)}
+                                        style={({ pressed }) => [
+                                            styles.option,
+                                            {
+                                                backgroundColor: pressed
+                                                    ? theme.colors.surfaceSecondary
+                                                    : 'transparent',
+                                                paddingHorizontal: theme.spacing[4],
+                                                paddingVertical: theme.spacing[3]
+                                            },
+                                            item.value === value && {
+                                                backgroundColor: theme.colors.surfaceSecondary
+                                            }
+                                        ]}
                                     >
-                                        {item.label}
-                                    </Text>
-                                </Pressable>
-                            )}
-                        />
-                    </View>
+                                        <Text
+                                            style={{
+                                                color: theme.colors.text,
+                                                fontSize: theme.fontSizes.md,
+                                                fontWeight:
+                                                    item.value === value
+                                                        ? theme.fontWeights.semibold
+                                                        : theme.fontWeights.normal
+                                            }}
+                                        >
+                                            {item.label}
+                                        </Text>
+                                    </Pressable>
+                                )}
+                            />
+                        </View>
+                    </Pressable>
                 </Pressable>
             </Modal>
         </View>

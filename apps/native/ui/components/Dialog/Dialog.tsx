@@ -1,8 +1,17 @@
-import React from 'react'
+import React, { createContext, useContext } from 'react'
 import { Modal, Pressable, StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native'
 
 import { useTheme } from '../../hooks/useTheme'
 import { Button, ButtonProps } from '../Button'
+
+/**
+ * Dialog context for managing dialog state
+ */
+interface DialogContextValue {
+    onOpenChange: (open: boolean) => void
+}
+
+const DialogContext = createContext<DialogContextValue | null>(null)
 
 /**
  * Dialog component props
@@ -97,19 +106,21 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
     const { theme } = useTheme()
 
     return (
-        <Modal
-            visible={open}
-            transparent
-            animationType="fade"
-            onRequestClose={() => onOpenChange(false)}
-        >
-            <Pressable
-                style={[styles.overlay, { backgroundColor: theme.colors.overlay }]}
-                onPress={() => onOpenChange(false)}
+        <DialogContext.Provider value={{ onOpenChange }}>
+            <Modal
+                visible={open}
+                transparent
+                animationType="fade"
+                onRequestClose={() => onOpenChange(false)}
             >
-                <Pressable onPress={(e) => e.stopPropagation()}>{children}</Pressable>
-            </Pressable>
-        </Modal>
+                <Pressable
+                    style={[styles.overlay, { backgroundColor: theme.colors.overlay }]}
+                    onPress={() => onOpenChange(false)}
+                >
+                    <Pressable onPress={(e) => e.stopPropagation()}>{children}</Pressable>
+                </Pressable>
+            </Modal>
+        </DialogContext.Provider>
     )
 }
 
@@ -211,7 +222,16 @@ export function DialogFooter({ children, style }: DialogFooterProps) {
  * Dialog close button - uses Dialog context to close
  */
 export function DialogClose({ onClose, ...buttonProps }: DialogCloseProps) {
-    return <Button variant="ghost" onPress={onClose} {...buttonProps} />
+    const context = useContext(DialogContext)
+
+    const handleClose = () => {
+        if (context?.onOpenChange) {
+            context.onOpenChange(false)
+        }
+        onClose?.()
+    }
+
+    return <Button variant="ghost" onPress={handleClose} {...buttonProps} />
 }
 
 const styles = StyleSheet.create({

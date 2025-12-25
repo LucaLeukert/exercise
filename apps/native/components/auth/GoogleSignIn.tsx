@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Alert } from 'react-native'
 import { useRouter } from 'expo-router'
 import * as WebBrowser from 'expo-web-browser'
 import { Button } from '@/ui'
@@ -64,6 +65,19 @@ export default function GoogleSignIn() {
             } else {
                 // Use signIn or signUp for next steps such as MFA
                 console.log('Additional steps required:', { signIn, signUp })
+                
+                // Show user-facing alert explaining next steps
+                Alert.alert(
+                    'Additional Steps Required',
+                    'Your sign-in requires additional verification. Please complete the authentication process in the browser window.',
+                    [
+                        {
+                            text: 'OK',
+                            style: 'default'
+                        }
+                    ],
+                    { cancelable: true }
+                )
             }
         } catch (error) {
             console.error('Unexpected error in OAuth flow:', error)

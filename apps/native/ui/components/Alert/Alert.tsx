@@ -112,7 +112,7 @@ export function Alert({
                     {title}
                 </Text>
             )}
-            {(description || children) && (
+            {description && (
                 <Text
                     style={[
                         styles.description,
@@ -124,8 +124,41 @@ export function Alert({
                         descriptionStyle
                     ]}
                 >
-                    {description || children}
+                    {description}
                 </Text>
+            )}
+            {children && (
+                <View
+                    style={[
+                        {
+                            marginTop: title || description ? theme.spacing[1] : 0
+                        }
+                    ]}
+                >
+                    {typeof children === 'string' ||
+                    (Array.isArray(children) &&
+                        children.every(
+                            (child) =>
+                                typeof child === 'string' ||
+                                (React.isValidElement(child) && child.type === Text)
+                        )) ||
+                    (React.isValidElement(children) && children.type === Text) ? (
+                        <Text
+                            style={[
+                                styles.description,
+                                {
+                                    color: theme.colors.textSecondary,
+                                    fontSize: theme.fontSizes.sm
+                                },
+                                descriptionStyle
+                            ]}
+                        >
+                            {children}
+                        </Text>
+                    ) : (
+                        children
+                    )}
+                </View>
             )}
         </View>
     )

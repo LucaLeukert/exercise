@@ -76,10 +76,10 @@ export default function AppleSignIn() {
         <Button
             title="Sign in with Apple"
             onPress={onPress}
-            disabled={isLoading}
             loading={isLoading}
-            leftIcon={<Ionicons name="logo-apple" size={20} color="#fff" />}
-            style={{ backgroundColor: '#000' }}
+            leftIcon={<Ionicons name="logo-apple" size={20} color="#FFFFFF" />}
+            variant="primary"
+            style={{ backgroundColor: '#000000' }}
             textStyle={{ letterSpacing: 0.5 }}
             fullWidth
         />

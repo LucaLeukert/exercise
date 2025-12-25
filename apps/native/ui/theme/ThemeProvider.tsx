@@ -23,41 +23,14 @@ export function ThemeProvider({
 
     // Initialize theme on mount
     useEffect(() => {
-        void initializeTheme()
-    }, [initializeTheme])
+        void initializeTheme(defaultTheme, defaultFollowSystem)
+    }, [initializeTheme, defaultTheme, defaultFollowSystem])
 
     // Update system color scheme when it changes
     useEffect(() => {
         updateSystemColorScheme(systemColorScheme ?? null)
     }, [systemColorScheme, updateSystemColorScheme])
 
-    // Compute effective theme and update store when following system
-    const effectiveThemeName = useMemo(() => {
-        if (followSystem && systemColorScheme) {
-            return systemColorScheme
-        }
-        return themeName
-    }, [followSystem, systemColorScheme, themeName])
-
-    useEffect(() => {
-        if (!isLoaded) return
-
-        // Only update theme if we're following system AND the effective theme changed
-        if (followSystem && systemColorScheme) {
-            const effectiveTheme = getTheme(effectiveThemeName)
-            const currentState = useThemeStore.getState()
-
-            // Only update if the effective theme is different from current
-            if (currentState.theme.name !== effectiveThemeName) {
-                useThemeStore.setState({
-                    theme: effectiveTheme,
-                    isDark: effectiveTheme.isDark,
-                    themeName: effectiveThemeName
-                })
-            }
-        }
-        // If not following system, the theme is already set correctly by setTheme()
-    }, [isLoaded, followSystem, systemColorScheme, effectiveThemeName])
 
     // Don't render until theme is loaded to prevent flash
     if (!isLoaded) {
