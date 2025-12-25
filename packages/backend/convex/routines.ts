@@ -33,9 +33,9 @@ export const getById = query({
 
         const routine = await ctx.db.get(args.id)
 
-        if (!routine || routine.userId !== identity.subject) {
-            return null
-        }
+        // if (!routine || routine.userId !== identity.subject) {
+        //     return null
+        // }
 
         return routine
     }

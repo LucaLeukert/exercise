@@ -94,14 +94,21 @@ export default function HomeLayout() {
                     headerShown: true
                 }}
             />
-            <Stack.Screen
-                name="onboarding"
-                options={{
-                    title: 'Welcome!',
-                    headerShown: false,
-                    presentation: 'fullScreenModal'
-                }}
-            />
-        </Stack>
-    )
-}
+                <Stack.Screen
+                    name="onboarding"
+                    options={{
+                        title: 'Welcome!',
+                        headerShown: false,
+                        presentation: 'fullScreenModal'
+                    }}
+                />
+                <Stack.Screen
+                    name="workout/spectate/[id]"
+                    options={{
+                        title: 'Spectating Workout',
+                        headerShown: true
+                    }}
+                />
+            </Stack>
+        )
+    }

@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
-import { Button, useTheme } from '@/ui'
+import { Button, Card, Text as UIText, useTheme } from '@/ui'
 import { RoutineId } from '@/utils/convex'
 import { useWorkoutSession, WorkoutSet } from '@/utils/useWorkoutSession'
 import { isValidConvexId } from '@/utils/workoutUtils'
@@ -14,6 +14,7 @@ export default function StartWorkoutPage() {
     const { theme } = useTheme()
     const { id } = useLocalSearchParams<{ id: string }>()
     const isQuickWorkout = !isValidConvexId(id)
+    const [visibility, setVisibility] = useState<'private' | 'friends' | 'public'>('private')
 
     const routine = useQuery(
         api.routines.getById,
@@ -53,7 +54,7 @@ export default function StartWorkoutPage() {
         // For quick workouts, start with empty sets - user adds exercises manually
 
         const routineId = isQuickWorkout ? undefined : id
-        const result = await startWorkout(routineId, initialSets)
+        const result = await startWorkout(routineId, initialSets, visibility)
 
         result.match(
             () => {
@@ -124,12 +125,80 @@ export default function StartWorkoutPage() {
                             {
                                 color: theme.colors.textSecondary,
                                 fontSize: theme.fontSizes.md,
-                                marginBottom: theme.spacing[8]
+                                marginBottom: theme.spacing[6]
                             }
                         ]}
                     >
                         Start an empty workout and add exercises as you go
                     </Text>
+
+                    <Card elevation="sm" padding="md" style={{ width: '100%', marginBottom: theme.spacing[6] }}>
+                        <UIText
+                            variant="secondary"
+                            size="sm"
+                            weight="semibold"
+                            style={{ marginBottom: theme.spacing[3] }}
+                        >
+                            Visibility
+                        </UIText>
+                        <View style={{ gap: theme.spacing[2] }}>
+                            <Button
+                                title="Private"
+                                onPress={() => setVisibility('private')}
+                                variant={visibility === 'private' ? 'primary' : 'outline'}
+                                fullWidth
+                                size="sm"
+                                leftIcon={
+                                    <Ionicons
+                                        name="lock-closed"
+                                        size={16}
+                                        color={
+                                            visibility === 'private'
+                                                ? theme.colors.primaryForeground
+                                                : theme.colors.primary
+                                        }
+                                    />
+                                }
+                            />
+                            <Button
+                                title="Friends Only"
+                                onPress={() => setVisibility('friends')}
+                                variant={visibility === 'friends' ? 'primary' : 'outline'}
+                                fullWidth
+                                size="sm"
+                                leftIcon={
+                                    <Ionicons
+                                        name="people"
+                                        size={16}
+                                        color={
+                                            visibility === 'friends'
+                                                ? theme.colors.primaryForeground
+                                                : theme.colors.primary
+                                        }
+                                    />
+                                }
+                            />
+                            <Button
+                                title="Public"
+                                onPress={() => setVisibility('public')}
+                                variant={visibility === 'public' ? 'primary' : 'outline'}
+                                fullWidth
+                                size="sm"
+                                leftIcon={
+                                    <Ionicons
+                                        name="globe"
+                                        size={16}
+                                        color={
+                                            visibility === 'public'
+                                                ? theme.colors.primaryForeground
+                                                : theme.colors.primary
+                                        }
+                                    />
+                                }
+                            />
+                        </View>
+                    </Card>
+
                     <Button
                         title="Start Quick Workout"
                         onPress={handleStartWorkout}
@@ -236,6 +305,74 @@ export default function StartWorkoutPage() {
                         </Text>
                     </View>
                 </View>
+
+                <Card elevation="sm" padding="md" style={{ width: '100%', marginBottom: theme.spacing[6] }}>
+                    <UIText
+                        variant="secondary"
+                        size="sm"
+                        weight="semibold"
+                        style={{ marginBottom: theme.spacing[3] }}
+                    >
+                        Visibility
+                    </UIText>
+                    <View style={{ gap: theme.spacing[2] }}>
+                        <Button
+                            title="Private"
+                            onPress={() => setVisibility('private')}
+                            variant={visibility === 'private' ? 'primary' : 'outline'}
+                            fullWidth
+                            size="sm"
+                            leftIcon={
+                                <Ionicons
+                                    name="lock-closed"
+                                    size={16}
+                                    color={
+                                        visibility === 'private'
+                                            ? theme.colors.primaryForeground
+                                            : theme.colors.primary
+                                    }
+                                />
+                            }
+                        />
+                        <Button
+                            title="Friends Only"
+                            onPress={() => setVisibility('friends')}
+                            variant={visibility === 'friends' ? 'primary' : 'outline'}
+                            fullWidth
+                            size="sm"
+                            leftIcon={
+                                <Ionicons
+                                    name="people"
+                                    size={16}
+                                    color={
+                                        visibility === 'friends'
+                                            ? theme.colors.primaryForeground
+                                            : theme.colors.primary
+                                    }
+                                />
+                            }
+                        />
+                        <Button
+                            title="Public"
+                            onPress={() => setVisibility('public')}
+                            variant={visibility === 'public' ? 'primary' : 'outline'}
+                            fullWidth
+                            size="sm"
+                            leftIcon={
+                                <Ionicons
+                                    name="globe"
+                                    size={16}
+                                    color={
+                                        visibility === 'public'
+                                            ? theme.colors.primaryForeground
+                                            : theme.colors.primary
+                                    }
+                                />
+                            }
+                        />
+                    </View>
+                </Card>
+
                 <Button
                     title="Start Workout"
                     onPress={handleStartWorkout}

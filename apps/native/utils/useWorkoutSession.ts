@@ -85,7 +85,8 @@ export function useWorkoutSession() {
     const startWorkout = useCallback(
         async (
             routineId?: string,
-            initialSets: WorkoutSet[] = []
+            initialSets: WorkoutSet[] = [],
+            visibility: 'private' | 'friends' | 'public' = 'private'
         ): Promise<Result<any, WorkoutError>> => {
             setIsStarting(true)
 
@@ -101,7 +102,7 @@ export function useWorkoutSession() {
                     startMutation,
                     {
                         routineId: routineId as RoutineId | undefined,
-                        visibility: 'private',
+                        visibility,
                         initialProgress
                     },
                     (error) =>
