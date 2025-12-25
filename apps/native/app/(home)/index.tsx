@@ -1,12 +1,5 @@
 import { useState } from 'react'
-import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
-} from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
 import { SignOutButton } from '@/components/auth/SignOut'
@@ -20,6 +13,7 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    Text,
     useTheme
 } from '@/ui'
 import { api } from '@/utils/convex'
@@ -80,27 +74,13 @@ export default function HomePage() {
             >
                 <View>
                     <Text
-                        style={[
-                            styles.greeting,
-                            {
-                                color: theme.colors.textTertiary,
-                                fontSize: theme.fontSizes.sm,
-                                marginBottom: theme.spacing[1]
-                            }
-                        ]}
+                        variant="tertiary"
+                        size="sm"
+                        style={[styles.greeting, { marginBottom: theme.spacing[1] }]}
                     >
                         Welcome back
                     </Text>
-                    <Text
-                        style={[
-                            styles.userName,
-                            {
-                                color: theme.colors.text,
-                                fontSize: theme.fontSizes['4xl'],
-                                fontWeight: theme.fontWeights.extrabold
-                            }
-                        ]}
-                    >
+                    <Text variant="default" size="4xl" weight="extrabold" style={styles.userName}>
                         {user?.firstName || 'User'}
                     </Text>
                 </View>
@@ -248,14 +228,10 @@ export default function HomePage() {
                 >
                     <Ionicons name="list" size={24} color={theme.colors.primary} />
                     <Text
-                        style={[
-                            styles.actionButtonText,
-                            {
-                                color: theme.colors.primary,
-                                fontSize: theme.fontSizes.sm,
-                                fontWeight: theme.fontWeights.semibold
-                            }
-                        ]}
+                        variant="primary"
+                        size="sm"
+                        weight="semibold"
+                        style={styles.actionButtonText}
                     >
                         Browse Exercises
                     </Text>
@@ -276,14 +252,10 @@ export default function HomePage() {
                 >
                     <Ionicons name="trash-bin" size={24} color={theme.colors.error} />
                     <Text
-                        style={[
-                            styles.actionButtonText,
-                            {
-                                color: theme.colors.error,
-                                fontSize: theme.fontSizes.sm,
-                                fontWeight: theme.fontWeights.semibold
-                            }
-                        ]}
+                        variant="error"
+                        size="sm"
+                        weight="semibold"
+                        style={styles.actionButtonText}
                     >
                         Clear Database
                     </Text>
@@ -304,14 +276,10 @@ export default function HomePage() {
                 >
                     <Ionicons name="sync" size={24} color={theme.colors.success} />
                     <Text
-                        style={[
-                            styles.actionButtonText,
-                            {
-                                color: theme.colors.success,
-                                fontSize: theme.fontSizes.sm,
-                                fontWeight: theme.fontWeights.semibold
-                            }
-                        ]}
+                        variant="success"
+                        size="sm"
+                        weight="semibold"
+                        style={styles.actionButtonText}
                     >
                         Sync Exercises
                     </Text>
@@ -321,15 +289,10 @@ export default function HomePage() {
             {/* Routines Section */}
             <View style={[styles.routinesSection, { paddingHorizontal: theme.spacing[5] }]}>
                 <Text
-                    style={[
-                        styles.sectionTitle,
-                        {
-                            color: theme.colors.text,
-                            fontSize: theme.fontSizes['3xl'],
-                            fontWeight: theme.fontWeights.bold,
-                            marginBottom: theme.spacing[4]
-                        }
-                    ]}
+                    variant="default"
+                    size="3xl"
+                    weight="bold"
+                    style={[styles.sectionTitle, { marginBottom: theme.spacing[4] }]}
                 >
                     My Routines
                 </Text>
@@ -384,15 +347,10 @@ export default function HomePage() {
                                     ]}
                                 >
                                     <Text
-                                        style={[
-                                            styles.routineName,
-                                            {
-                                                color: theme.colors.text,
-                                                fontSize: theme.fontSizes.xl,
-                                                fontWeight: theme.fontWeights.bold,
-                                                flex: 1
-                                            }
-                                        ]}
+                                        variant="default"
+                                        size="xl"
+                                        weight="bold"
+                                        style={[styles.routineName, { flex: 1 }]}
                                     >
                                         {item.name}
                                     </Text>
@@ -552,18 +510,10 @@ export default function HomePage() {
                                         }
                                     />
                                     <Text
-                                        style={{
-                                            color:
-                                                themeName === themeOption
-                                                    ? theme.colors.primary
-                                                    : theme.colors.text,
-                                            fontSize: theme.fontSizes.md,
-                                            fontWeight:
-                                                themeName === themeOption
-                                                    ? theme.fontWeights.semibold
-                                                    : theme.fontWeights.normal,
-                                            textTransform: 'capitalize'
-                                        }}
+                                        variant={themeName === themeOption ? 'primary' : 'default'}
+                                        size="md"
+                                        weight={themeName === themeOption ? 'semibold' : 'normal'}
+                                        style={{ textTransform: 'capitalize' }}
                                     >
                                         {themeOption}
                                     </Text>

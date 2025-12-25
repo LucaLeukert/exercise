@@ -84,3 +84,7 @@ export type { SwitchProps, SwitchSize } from './Switch'
 // Alert
 export { Alert } from './Alert'
 export type { AlertProps, AlertVariant } from './Alert'
+
+// Text
+export { Text } from './Text'
+export type { TextProps, TextVariant, TextSize, TextWeight } from './Text'
