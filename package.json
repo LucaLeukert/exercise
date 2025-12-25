@@ -6,6 +6,7 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
+    "validate-env": "turbo run validate-env",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache --ignore-path .prettierignore",
     "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache --ignore-path .prettierignore",
     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",

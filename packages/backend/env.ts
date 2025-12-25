@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const env = createEnv({
     server: {
-        CLERK_JWT_ISSUER_DOMAIN: z.string().min(1)
+        CLERK_JWT_ISSUER_DOMAIN: z.url().min(1)
     },
 
     /**

@@ -14,6 +14,7 @@
     "lint": {},
     "typecheck": {},
     "format": {},
+    "validate-env": {},
     "clean": {
       "cache": false
     }

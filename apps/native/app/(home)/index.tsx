@@ -85,6 +85,15 @@ export default function HomePage() {
                     </Text>
                 </View>
                 <View style={[styles.headerButtons, { gap: theme.spacing[3] }]}>
+                    <TouchableOpacity onPress={() => router.push('/friends' as any)}>
+                        <Ionicons name="people" size={24} color={theme.colors.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => router.push('/profile' as any)}
+                        style={{ marginRight: theme.spacing[2] }}
+                    >
+                        <Ionicons name="person-circle" size={28} color={theme.colors.primary} />
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={() => setShowThemePicker(true)}>
                         <Ionicons
                             name={isDark ? 'moon' : 'sunny'}
