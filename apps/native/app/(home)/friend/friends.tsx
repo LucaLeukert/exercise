@@ -1,5 +1,5 @@
 import type { ReactMutation } from 'convex/react'
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack } from 'expo-router'
@@ -85,6 +85,141 @@ const UserProfileDisplay = ({ userId, theme }: UserProfileDisplayProps) => {
                     Friend
                 </Badge>
             </View>
+        </Pressable>
+    )
+}
+
+type ActiveWorkoutBadgeProps = {
+    workoutId: Id<'workoutSessions'>
+    userId: string
+    theme: Theme
+}
+
+const ActiveWorkoutBadge = ({ workoutId, userId, theme }: ActiveWorkoutBadgeProps) => {
+    const workout = useQuery(api.workouts.getById, { workoutId })
+    const routine = useQuery(
+        api.routines.getById,
+        workout?.routineId ? { id: workout.routineId } : 'skip'
+    )
+
+    const [elapsedTime, setElapsedTime] = useState(0)
+
+    // Update elapsed time every second
+    useEffect(() => {
+        if (!workout || workout.status !== 'active') {
+            setElapsedTime(0)
+            return
+        }
+
+        // Set initial time
+        setElapsedTime(Date.now() - workout.startedAt)
+
+        // Update every second
+        const interval = setInterval(() => {
+            setElapsedTime(Date.now() - workout.startedAt)
+        }, 1000)
+
+        return () => clearInterval(interval)
+    }, [workout])
+
+    const formatDuration = (ms: number) => {
+        const minutes = Math.floor(ms / 60000)
+        if (minutes < 60) return `${minutes}m`
+        const hours = Math.floor(minutes / 60)
+        return `${hours}h ${minutes % 60}m`
+    }
+
+    if (!workout || !routine) {
+        return (
+            <Card
+                elevation="sm"
+                padding="sm"
+                style={{ marginBottom: theme.spacing[2], backgroundColor: theme.colors.primary }}
+            >
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between'
+                    }}
+                >
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            gap: theme.spacing[2]
+                        }}
+                    >
+                        <View
+                            style={[
+                                styles.pulseDot,
+                                {
+                                    width: 8,
+                                    height: 8,
+                                    borderRadius: 4,
+                                    backgroundColor: theme.colors.primaryForeground
+                                }
+                            ]}
+                        />
+                        <Skeleton width={100} height={16} borderRadius={4} />
+                        <Skeleton width={30} height={12} borderRadius={4} />
+                    </View>
+                    <Ionicons
+                        name="chevron-forward"
+                        size={16}
+                        color={theme.colors.primaryForeground}
+                    />
+                </View>
+            </Card>
+        )
+    }
+
+    if (!workout || workout.status !== 'active') {
+        return null
+    }
+
+    const routineName = routine?.name
+
+    return (
+        <Pressable onPress={() => router.push(`/workout/spectate/${workoutId}`)}>
+            <Card
+                elevation="sm"
+                padding="sm"
+                style={{ marginBottom: theme.spacing[2], backgroundColor: theme.colors.primary }}
+            >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing[2] }}>
+                    <View
+                        style={[
+                            styles.pulseDot,
+                            {
+                                width: 8,
+                                height: 8,
+                                borderRadius: 4,
+                                backgroundColor: theme.colors.primaryForeground
+                            }
+                        ]}
+                    />
+                    <Text
+                        variant="default"
+                        size="sm"
+                        weight="semibold"
+                        style={{ color: theme.colors.primaryForeground, flex: 1 }}
+                    >
+                        {routineName}
+                    </Text>
+                    <Text
+                        variant="secondary"
+                        size="xs"
+                        style={{ color: theme.colors.primaryForeground }}
+                    >
+                        {formatDuration(elapsedTime)}
+                    </Text>
+                    <Ionicons
+                        name="chevron-forward"
+                        size={16}
+                        color={theme.colors.primaryForeground}
+                    />
+                </View>
+            </Card>
         </Pressable>
     )
 }
@@ -201,6 +336,20 @@ type FriendsListProps = {
 }
 
 const FriendsList = ({ acceptedFriends, userId, theme, removeFriend }: FriendsListProps) => {
+    // Get all active workouts from friends
+    const spectatableWorkouts = useQuery(api.workouts.getSpectatableWorkouts, {})
+
+    // Create a map of userId -> active workout
+    const activeWorkoutsByUserId = useMemo(() => {
+        const map = new Map<string, Id<'workoutSessions'>>()
+        if (spectatableWorkouts) {
+            for (const workout of spectatableWorkouts) {
+                map.set(workout.userId, workout._id)
+            }
+        }
+        return map
+    }, [spectatableWorkouts])
+
     return (
         <>
             <Text
@@ -259,31 +408,44 @@ const FriendsList = ({ acceptedFriends, userId, theme, removeFriend }: FriendsLi
                                     padding="md"
                                     style={{ marginBottom: theme.spacing[2] }}
                                 >
-                                    <View
-                                        style={[
-                                            styles.friendItem,
-                                            { justifyContent: 'space-between' }
-                                        ]}
-                                    >
-                                        <View style={{ flex: 1 }}>
-                                            <UserProfileDisplay
+                                    <View style={{ flex: 1 }}>
+                                        <View
+                                            style={[
+                                                styles.friendItem,
+                                                {
+                                                    justifyContent: 'space-between',
+                                                    marginBottom: theme.spacing[2]
+                                                }
+                                            ]}
+                                        >
+                                            <View style={{ flex: 1 }}>
+                                                <UserProfileDisplay
+                                                    userId={otherUserId}
+                                                    theme={theme}
+                                                />
+                                            </View>
+                                            <Button
+                                                onPress={async (e) => {
+                                                    e.stopPropagation()
+                                                    await removeFriend({ friendId: item._id })
+                                                }}
+                                                variant="ghost"
+                                                size="sm"
+                                            >
+                                                <Ionicons
+                                                    name="trash-outline"
+                                                    size={20}
+                                                    color={theme.colors.error}
+                                                />
+                                            </Button>
+                                        </View>
+                                        {activeWorkoutsByUserId.has(otherUserId) && (
+                                            <ActiveWorkoutBadge
+                                                workoutId={activeWorkoutsByUserId.get(otherUserId)!}
                                                 userId={otherUserId}
                                                 theme={theme}
                                             />
-                                        </View>
-                                        <Button
-                                            onPress={async () => {
-                                                await removeFriend({ friendId: item._id })
-                                            }}
-                                            variant="ghost"
-                                            size="sm"
-                                        >
-                                            <Ionicons
-                                                name="trash-outline"
-                                                size={20}
-                                                color={theme.colors.error}
-                                            />
-                                        </Button>
+                                        )}
                                     </View>
                                 </Card>
                             </Pressable>
@@ -414,5 +576,14 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8
+    },
+    activeWorkoutBadge: {
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    pulseDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4
     }
 })

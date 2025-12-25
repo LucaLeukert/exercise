@@ -155,6 +155,7 @@ export default defineSchema({
         name: v.string(),
         description: v.optional(v.string()),
         exercises: v.array(exerciseInRoutineValidator),
+        visibility: v.union(v.literal('private'), v.literal('friends'), v.literal('public')),
         createdAt: v.number(),
         updatedAt: v.number()
     })
@@ -170,7 +171,7 @@ export default defineSchema({
             v.literal('cancelled'),
             v.literal('archived')
         ),
-        visibility: v.union(v.literal('private'), v.literal('public')),
+        visibility: v.union(v.literal('private'), v.literal('friends'), v.literal('public')),
         state: workoutProgressValidator,
         startedAt: v.number(),
         endedAt: v.optional(v.number()),
@@ -178,7 +179,8 @@ export default defineSchema({
     })
         .index('by_userId', ['userId'])
         .index('by_userId_startedAt', ['userId', 'startedAt'])
-        .index('by_userId_status', ['userId', 'status']),
+        .index('by_userId_status', ['userId', 'status'])
+        .index('by_status_visibility', ['status', 'visibility']),
 
     userProfiles: defineTable(userProfileValidator)
         .index('by_userId', ['userId']),

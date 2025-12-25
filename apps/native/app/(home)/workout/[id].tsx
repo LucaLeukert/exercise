@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { VisibilitySelector } from '@/components/VisibilitySelector'
 import { Button, useTheme } from '@/ui'
 import { RoutineId } from '@/utils/convex'
 import { useWorkoutSession, WorkoutSet } from '@/utils/useWorkoutSession'
@@ -14,6 +15,7 @@ export default function StartWorkoutPage() {
     const { theme } = useTheme()
     const { id } = useLocalSearchParams<{ id: string }>()
     const isQuickWorkout = !isValidConvexId(id)
+    const [visibility, setVisibility] = useState<'private' | 'friends' | 'public'>('private')
 
     const routine = useQuery(
         api.routines.getById,
@@ -22,6 +24,13 @@ export default function StartWorkoutPage() {
     const isLoading = routine === undefined && !isQuickWorkout
 
     const { hasActiveWorkout, startWorkout, isStarting } = useWorkoutSession()
+
+    // For routine workouts, use the routine's visibility
+    useEffect(() => {
+        if (routine && !isQuickWorkout) {
+            setVisibility(routine.visibility)
+        }
+    }, [routine, isQuickWorkout])
 
     // Redirect to active workout if there's already an active workout
     useEffect(() => {
@@ -53,7 +62,10 @@ export default function StartWorkoutPage() {
         // For quick workouts, start with empty sets - user adds exercises manually
 
         const routineId = isQuickWorkout ? undefined : id
-        const result = await startWorkout(routineId, initialSets)
+        // For routine workouts, visibility is determined by the routine (handled in backend)
+        // For quick workouts, use the selected visibility
+        const workoutVisibility = isQuickWorkout ? visibility : undefined
+        const result = await startWorkout(routineId, initialSets, workoutVisibility)
 
         result.match(
             () => {
@@ -124,12 +136,15 @@ export default function StartWorkoutPage() {
                             {
                                 color: theme.colors.textSecondary,
                                 fontSize: theme.fontSizes.md,
-                                marginBottom: theme.spacing[8]
+                                marginBottom: theme.spacing[6]
                             }
                         ]}
                     >
                         Start an empty workout and add exercises as you go
                     </Text>
+
+                    <VisibilitySelector value={visibility} onChange={setVisibility} />
+
                     <Button
                         title="Start Quick Workout"
                         onPress={handleStartWorkout}
@@ -236,6 +251,12 @@ export default function StartWorkoutPage() {
                         </Text>
                     </View>
                 </View>
+
+                {/* Only show visibility selector for quick workouts */}
+                {isQuickWorkout && (
+                    <VisibilitySelector value={visibility} onChange={setVisibility} />
+                )}
+
                 <Button
                     title="Start Workout"
                     onPress={handleStartWorkout}
